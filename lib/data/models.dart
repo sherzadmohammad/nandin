@@ -1,0 +1,438 @@
+import 'package:nanden/data/content_data.dart';
+import 'package:nanden/data/meal_data.dart';
+import 'package:flutter/material.dart';
+//https://www.yummly.com/recipes?q=kurdish&taste-pref-appended=true
+   bool isKuMode=false;
+   class Language{
+    final int id;
+    final String name;
+    final String? imgUrl;
+    Language(this.id, this.name, this.imgUrl);
+    
+   }
+   Language language=isKuMode?Language(1, 'kurdish', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT538iXTZpenpRNl4l25JpakqS_5VjF0FNCSQ&s'):
+       Language(2, 'english', 'https://i.pinimg.com/474x/96/21/13/962113523cc0dea940896a4205cb0993.jpg');
+List models = [
+ Category(id: 'c1', title:isKuMode? 'ئیتالی': 'Italian', color: Colors.purple,
+  imageUrl: 'https://i.pinimg.com/474x/3c/47/cb/3c47cba5ce721f9b683b706105034a10.jpg',),
+ Category(id: 'c2', title:isKuMode? 'خێرا و ئاسان': 'Quick & Easy', color: Colors.red,
+  imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/easy-dinner-ideas-tuna-melt-64529b179c289.jpg',),
+ Category(id: 'c10', title:isKuMode? 'هاوینە': 'Summer', color: Colors.teal,
+     imageUrl: 'https://cdn.pixabay.com/photo/2018/04/09/18/26/asparagus-3304997_1280.jpg'),
+ Category(id: 'c9', title:isKuMode? 'کوردەواری': 'kurdish',color: Colors.pink,
+     imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT538iXTZpenpRNl4l25JpakqS_5VjF0FNCSQ&s'),
+ Category(id: 'c3', title:isKuMode? 'بەرگر': 'Hamburgers',color: Colors.orange,
+  imageUrl: 'https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg',),
+ Category(id: 'c4', title:isKuMode? 'ئەڵمانی': 'German', color: Colors.amber,
+  imageUrl: 'https://i.pinimg.com/474x/53/23/eb/5323eb1abb0fef6f2cfde0b1f7e94c2c.jpg',),
+ Category(id: 'c5', title:isKuMode? 'بێ چەوری': 'Light & Lovely', color: Colors.blue,
+  imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7tx36ZJWq-gBke3vqQAcoQzIzyQvaSDrwmQ&s',),
+ Category(id: 'c6',title:isKuMode? 'بیانی دەگمەن': 'Exotic', color: Colors.green,
+  imageUrl: 'https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1280.jpg',),
+ Category(id: 'c7', title:isKuMode? 'بەیانیان': 'Breakfast', color: Colors.lightBlue,
+     imageUrl: 'https://cdn.pixabay.com/photo/2018/07/10/21/23/pancake-3529653_1280.jpg'),
+ Category(id: 'c8', title:isKuMode? 'ئاسیایی': 'Asian', color: Colors.lightGreen,
+     imageUrl: 'https://cdn.pixabay.com/photo/2018/06/18/16/05/indian-food-3482749_1280.jpg'),
+
+];
+ List<Meal> dummyMeals = [
+  Meal(id: 'm17', categories: ['c9'], title: 'biryany', imageUrl: 'https://lh3.googleusercontent.com/J2qmEt5cfQS6t-QbqlyBVgneDq7dSM4yPDcaXy8jct1U49Ufn31IDNbeAG--8W7oqN7zOUyNnpwK2FjrVSpv0Nnqu5XYNxA2cQ=w1280-h1280-c-rw-v1-e365', ingredients: ['do not know yet'], steps: ['up to you'], duration: 40, complexity: Complexity.challenging, affordability: Affordability.affordable, isGlutenFree: false, isLactoseFree: true, isVegan: true, isVegetarian: false),
+  Meal(id: 'm16', categories: ['c9'], title: 'dolma', imageUrl: 'https://lh3.googleusercontent.com/Mx9K_ldU0rrtrZdqZLUICPjkHFubv8r0ZCpFhSxeUDAmMBdHJnqXKGShHIxers3bxkn1hLEVlFfsbnKp1rOSqQ=w1280-h1280-c-rw-v1-e365', ingredients: ['dont know yet'], steps: ['it is better to ask your mother!'], duration: 180, complexity: Complexity.hard, affordability: Affordability.pricey, isGlutenFree: false, isLactoseFree: false, isVegan: false, isVegetarian: true),
+  Meal(
+  id: 'm1',
+  categories: [
+   'c1',
+   'c2',
+   'c9'
+  ],
+  title:isKuMode?'': 'Spaghetti with Tomato Sauce',
+  affordability: Affordability.affordable,
+  complexity: Complexity.simple,
+  imageUrl:
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
+  duration: 20,
+  ingredients:isKuMode?[
+   '٤ تەماتە',
+   'یەک کەوچکی چێشت زەیتی زەیتون',
+   '١ پیاز',
+   '٢٥٠گم مەحکەرۆنی',
+   'بەهارات',
+   'پەنیر(ئارەزومەندانەیە)'
+  ]: [
+   '4 Tomatoes',
+   '1 Tablespoon of Olive Oil',
+   '1 Onion',
+   '250g Spaghetti',
+   'Spices',
+   'Cheese (optional)'
+  ],
+  steps:isKuMode?[
+   'تەماتە و پیازەکە بکە بە پارچەی بچووک.',
+   'بڕێک ئاو بکوڵێنە - کاتێک کوڵا خوێی تێبکە.',
+   'سپاگێتیەکە بخەرە ناو ئاوی کوڵاوەوە - پێویستە لە ماوەی نزیکەی ١٠ بۆ ١٢ خولەکدا ئەنجام بدرێت.',
+   'لەم نێوەندەدا هەندێک زەیتی زەیتون بە تافر بکە و پیازە بڕاوەکەی تێبکە.',
+   'دوای ٢ خولەک پارچە تەماتە و خوێ و بیبەر و بەهاراتەکانی تری تێبکە.',
+   'سۆسەکە تەواو دەبێت کاتێک سپاگێتیەکان بوون.',
+   'ئازادانە هەندێک پەنیر بخەرە سەر خواردنە تەواوەکە.'
+  ]: [
+   'Cut the tomatoes and the onion into small pieces.',
+   'Boil some water - add salt to it once it boils.',
+   'Put the spaghetti into the boiling water - they should be done in about 10 to 12 minutes.',
+   'In the meantime, heathen up some olive oil and add the cut onion.',
+   'After 2 minutes, add the tomato pieces, salt, pepper and your other spices.',
+   'The sauce will be done once the spaghetti are.',
+   'Feel free to add some cheese on top of the finished dish.'
+  ],
+  isGlutenFree: false,
+  isVegan: true,
+  isVegetarian: true,
+  isLactoseFree: true,
+ ),
+ Meal(
+  id: 'm2',
+  categories: [
+   'c2',
+  ],
+  title:isKuMode?'':  'Toast Hawaii',
+  affordability: Affordability.affordable,
+  complexity: Complexity.simple,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2018/07/11/21/51/toast-3532016_1280.jpg',
+  duration: 10,
+  ingredients:isKuMode?[
+   '1 پارچە نانی سپی',
+   '1 پارچە هام',
+   '1 پارچە ئەناناس',
+   '1-2 پارچە پەنیر',
+   'کەرە',
+
+  ]: [
+   '1 Slice White Bread',
+   '1 Slice Ham',
+   '1 Slice Pineapple',
+   '1-2 Slices of Cheese',
+   'Butter'
+  ],
+  steps:isKuMode?[
+   'لایەکی نانە سپییەکە کەرە بکە',
+   'چین چین هام و ئەناناس و پەنیرەکە لەسەر نانە سپییەکە',
+   'تۆستەکە بۆ ماوەی نزیکەی ١٠ خولەک لەناو فڕنەکەدا لە پلەی گەرمی ٢٠٠ پلەی سەدیدا بیبرژێنە'
+  ]: [
+   'Butter one side of the white bread',
+   'Layer ham, the pineapple and cheese on the white bread',
+   'Bake the toast for round about 10 minutes in the oven at 200°C'
+  ],
+  isGlutenFree: false,
+  isVegan: false,
+  isVegetarian: false,
+  isLactoseFree: false,
+ ),
+ Meal(
+  id: 'm3',
+  categories: [
+   'c2',
+   'c3',
+  ],
+  title:isKuMode?'هەمبەرگەری کلاسیک':  'Classic Hamburger',
+  affordability: Affordability.pricey,
+  complexity: Complexity.simple,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg',
+  duration: 45,
+  ingredients:isKuMode?[
+   'قیمەی گۆشت',
+   '١تەماتە',
+   '1 خەیار',
+   '١ پیاز',
+   'کەچەب',
+   '٢ سەمون ؛ بەرگر'
+  ]: [
+   '300g Cattle Hack',
+   '1 Tomato',
+   '1 Cucumber',
+   '1 Onion',
+   'Ketchup',
+   '2 Burger Buns'
+  ],
+  steps:isKuMode?[
+   'هەر دوو لای گۆشتەکە سۆرکەوە بۆ ماوەی ٤ خولەک',
+   'بە خێرایی نانەکان سوربکەرەوە بۆ ماوەی 1 خولەک لە هەر لایەک',
+   'نانەکان بە کەچەب خۆش بکە',
+   'بەرگر لەگەڵ تەماتە و خەیار و پیاز پێشکەش بکە'
+  ]: [
+   'Form 2 patties',
+   'Fry the patties for c. 4 minutes on each side',
+   'Quickly fry the buns for c. 1 minute on each side',
+   'Baruch buns with ketchup',
+   'Serve burger with tomato, cucumber and onion'
+  ],
+  isGlutenFree: false,
+  isVegan: false,
+  isVegetarian: false,
+  isLactoseFree: true,
+ ),
+ Meal(
+  id: 'm4',
+  categories: [
+   'c4',
+  ],
+  title:'Wiener Schnitzel',
+  affordability: Affordability.luxurious,
+  complexity: Complexity.challenging,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2018/03/31/19/29/schnitzel-3279045_1280.jpg',
+  duration: 60,
+  ingredients:isKuMode?[
+   '8 کۆترە گۆشتی گوێدرێژ',
+   '٤ هێلکە',
+   '٢٠٠گم وردە نان',
+   '١٠٠گم ئارد',
+   '٣٠٠گم کەرە',
+   '١٠٠گم رۆنی روەکی',
+   'خوێ',
+   'یەك پارچە لیمۆ'
+  ]: [
+   '8 Veal Cutlets',
+   '4 Eggs',
+   '200g Bread Crumbs',
+   '100g Flour',
+   '300ml Butter',
+   '100g Vegetable Oil',
+   'Salt',
+   'Lemon Slices'
+  ],
+  steps:isKuMode?[]:
+  [
+   'Tenderize the veal to about 2–4mm, and salt on both sides.',
+   'On a flat plate, stir the eggs briefly with a fork.',
+   'Lightly coat the cutlets in flour then dip into the egg, and finally, coat in breadcrumbs.',
+   'Heat the butter and oil in a large pan (allow the fat to get very hot) and fry the schnitzels until golden brown on both sides.',
+   'Make sure to toss the pan regularly so that the schnitzels are surrounded by oil and the crumbing becomes ‘fluffy’.',
+   'Remove, and drain on kitchen paper. Fry the parsley in the remaining oil and drain.',
+   'Place the schnitzels on awarded plate and serve garnisheed parsley and slices of lemon.'
+  ],
+  isGlutenFree: false,
+  isVegan: false,
+  isVegetarian: false,
+  isLactoseFree: false,
+ ),
+Meal(
+  id: 'm5',
+  categories: [
+   'c2',
+   'c5',
+   'c10',
+  ],
+  title:isKuMode?'':  'Salad with Smoked Salmon',
+  affordability: Affordability.luxurious,
+  complexity: Complexity.simple,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2016/10/25/13/29/smoked-salmon-salad-1768890_1280.jpg',
+  duration: 15,
+  ingredients:isKuMode?[]: [
+   'Arugula',
+   'Lamb\'s Lettuce',
+   'Parsley',
+   'Fennel',
+   '200g Smoked Salmon',
+   'Mustard',
+   'Balsamic Vinegar',
+   'Olive Oil',
+   'Salt and Pepper'
+  ],
+  steps:isKuMode?[]: [
+   'Wash and cut salad and herbs',
+   'Dice the salmon',
+   'Process mustard, vinegar and olive oil into a dressing',
+   'Prepare the salad',
+   'Add salmon cubes and dressing'
+  ],
+  isGlutenFree: true,
+  isVegan: false,
+  isVegetarian: true,
+  isLactoseFree: true,
+ ),
+ Meal(
+  id: 'm6',
+  categories: [
+   'c6',
+   'c10',
+  ],
+  title:isKuMode?'':  'Delicious Orange Mousse',
+  affordability: Affordability.affordable,
+  complexity: Complexity.hard,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1280.jpg',
+  duration: 240,
+  ingredients:isKuMode?[]: [
+   '4 Sheets of Gelatin',
+   '150ml Orange Juice',
+   '80g Sugar',
+   '300g Yoghurt',
+   '200g Cream',
+   'Orange Peel',
+  ],
+  steps:isKuMode?[]: [
+   'Dissolve gelatin in pot',
+   'Add orange juice and sugar',
+   'Take pot off the stove',
+   'Add 2 tablespoons of yoghurt',
+   'Stir gelatin under remaining yoghurt',
+   'Cool everything down in the refrigerator',
+   'Whip the cream and lift it under die orange mass',
+   'Cool down again for at least 4 hours',
+   'Serve with orange peel',
+  ],
+  isGlutenFree: true,
+  isVegan: false,
+  isVegetarian: true,
+  isLactoseFree: false,
+ ),
+ Meal(
+  id: 'm7',
+  categories: [
+   'c7',
+  ],
+  title:isKuMode?'':  'Pancakes',
+  affordability: Affordability.affordable,
+  complexity: Complexity.simple,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2018/07/10/21/23/pancake-3529653_1280.jpg',
+  duration: 20,
+  ingredients:isKuMode?[]: [
+   '1 1/2 Cups all-purpose Flour',
+   '3 1/2 Teaspoons Baking Powder',
+   '1 Teaspoon Salt',
+   '1 Tablespoon White Sugar',
+   '1 1/4 cups Milk',
+   '1 Egg',
+   '3 Tablespoons Butter, melted',
+  ],
+  steps:isKuMode?[]: [
+   'In a large bowl, sift together the flour, baking powder, salt and sugar.',
+   'Make a well in the center and pour in the milk, egg and melted butter; mix until smooth.',
+   'Heat a lightly oiled griddle or frying pan over medium high heat.',
+   'Pour or scoop the batter onto the griddle, using approximately 1/4 cup for each pancake. Brown on both sides and serve hot.'
+  ],
+  isGlutenFree: true,
+  isVegan: false,
+  isVegetarian: true,
+  isLactoseFree: false,
+ ),
+ Meal(
+  id: 'm8',
+  categories: [
+   'c8',
+  ],
+  title:isKuMode?'':  'Creamy Indian Chicken Curry',
+  affordability: Affordability.pricey,
+  complexity: Complexity.challenging,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2018/06/18/16/05/indian-food-3482749_1280.jpg',
+  duration: 35,
+  ingredients:isKuMode?[]: [
+   '4 Chicken Breasts',
+   '1 Onion',
+   '2 Cloves of Garlic',
+   '1 Piece of Ginger',
+   '4 Tablespoons Almonds',
+   '1 Teaspoon Cayenne Pepper',
+   '500ml Coconut Milk',
+  ],
+  steps:isKuMode?[]: [
+   'Slice and fry the chicken breast',
+   'Process onion, garlic and ginger into paste and saute everything',
+   'Add spices and stir fry',
+   'Add chicken breast + 250ml of water and cook everything for 10 minutes',
+   'Add coconut milk',
+   'Serve with rice'
+  ],
+  isGlutenFree: true,
+  isVegan: false,
+  isVegetarian: false,
+  isLactoseFree: true,
+ ),
+ Meal(
+  id: 'm9',
+  categories: [
+   'c6',
+  ],
+  title:isKuMode?'':  'Chocolate Souffle',
+  affordability: Affordability.affordable,
+  complexity: Complexity.hard,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2014/08/07/21/07/souffle-412785_1280.jpg',
+  duration: 45,
+  ingredients:isKuMode?[]: [
+   '1 Teaspoon melted Butter',
+   '2 Tablespoons white Sugar',
+   '2 Ounces 70% dark Chocolate, broken into pieces',
+   '1 Tablespoon Butter',
+   '1 Tablespoon all-purpose Flour',
+   '4 1/3 tablespoons cold Milk',
+   '1 Pinch Salt',
+   '1 Pinch Cayenne Pepper',
+   '1 Large Egg Yolk',
+   '2 Large Egg Whites',
+   '1 Pinch Cream of Tartar',
+   '1 Tablespoon white Sugar',
+  ],
+  steps:isKuMode?[]: [
+   'Preheat oven to 190°C. Line a rimmed baking sheet with parchment paper.',
+   'Brush bottom and sides of 2 ramekins lightly with 1 teaspoon melted butter; cover bottom and sides right up to the rim.',
+   'Add 1 tablespoon white sugar to ramekins. Rotate ramekins until sugar coats all surfaces.',
+   'Place chocolate pieces in a metal mixing bowl.',
+   'Place bowl over a pan of about 3 cups hot water over low heat.',
+   'Melt 1 tablespoon butter in a skillet over medium heat. Sprinkle in flour. Whisk until flour is incorporated into butter and mixture thickens.',
+   'Whisk in cold milk until mixture becomes smooth and thickens. Transfer mixture to bowl with melted chocolate.',
+   'Add salt and cayenne pepper. Mix together thoroughly. Add egg yolk and mix to combine.',
+   'Leave bowl above the hot (not simmering) water to keep chocolate warm while you whip the egg whites.',
+   'Place 2 egg whites in a mixing bowl; add cream of tartar. Whisk until mixture begins to thicken and a drizzle from the whisk stays on the surface about 1 second before disappearing into the mix.',
+   'Add 1/3 of sugar and whisk in. Whisk in a bit more sugar about 15 seconds.',
+   'whisk in the rest of the sugar. Continue whisking until mixture is about as thick as shaving cream and holds soft peaks, 3 to 5 minutes.',
+   'Transfer a little less than half of egg whites to chocolate.',
+   'Mix until egg whites are thoroughly incorporated into the chocolate.',
+   'Add the rest of the egg whites; gently fold into the chocolate with a spatula, lifting from the bottom and folding over.',
+   'Stop mixing after the egg white disappears. Divide mixture between 2 prepared ramekins. Place ramekins on prepared baking sheet.',
+   'Bake in preheated oven until scuffles are puffed and have risen above the top of the rims, 12 to 15 minutes.',
+  ],
+  isGlutenFree: true,
+  isVegan: false,
+  isVegetarian: true,
+  isLactoseFree: false,
+ ),
+ Meal(
+  id: 'm10',
+  categories: [
+   'c2',
+   'c5',
+   'c10',
+  ],
+  title:isKuMode?'':  'Asparagus Salad with Cherry Tomatoes',
+  affordability: Affordability.luxurious,
+  complexity: Complexity.simple,
+  imageUrl:
+  'https://cdn.pixabay.com/photo/2018/04/09/18/26/asparagus-3304997_1280.jpg',
+  duration: 30,
+  ingredients:isKuMode?[]: [
+   'White and Green Asparagus',
+   '30g Pine Nuts',
+   '300g Cherry Tomatoes',
+   'Salad',
+   'Salt, Pepper and Olive Oil'
+  ],
+  steps:isKuMode?[]: [
+   'Wash, peel and cut the asparagus',
+   'Cook in salted water',
+   'Salt and pepper the asparagus',
+   'Roast the pine nuts',
+   'Halve the tomatoes',
+   'Mix with asparagus, salad and dressing',
+   'Serve with Baguette'
+  ],
+  isGlutenFree: true,
+  isVegan: true,
+  isVegetarian: true,
+  isLactoseFree: true,
+ ),
+];
