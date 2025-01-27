@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nanden/data/meal_data.dart';
 import 'package:nanden/widgets/meal_item.dart';
+import '../models/meal_data.dart';
 import 'meal_details_screen.dart';
 class MealsScreen extends StatelessWidget {
   const MealsScreen({super.key, this.title, required this.meals});

@@ -1,5 +1,5 @@
-import 'package:nanden/data/content_data.dart';
-import 'package:nanden/data/meal_data.dart';
+import 'package:nanden/models/content_data.dart';
+import 'package:nanden/models/meal_data.dart';
 import 'package:flutter/material.dart';
 //https://www.yummly.com/recipes?q=kurdish&taste-pref-appended=true
    bool isKuMode=false;

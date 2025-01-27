@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+
+void showToast({required BuildContext context, required String message}) {
+  final scaffold = ScaffoldMessenger.of(context);
+  scaffold.clearSnackBars();
+  scaffold.showSnackBar(
+    SnackBar(
+      duration: Durations.extralong4,
+      content: Text(message),
+      action: SnackBarAction(
+          label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar,
+      ),
+    ),
+  );
+}

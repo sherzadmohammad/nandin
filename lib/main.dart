@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/screens/tabs.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 final darkTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
@@ -16,8 +18,16 @@ final lightTheme = ThemeData(
     seedColor: const Color.fromARGB(255, 131, 39, 0),
   ),
 );
-
-void main() {
+const supabaseUrl ='https://chaszkfcxuirksawyrrx.supabase.co';
+const supabaseKey= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoYXN6a2ZjeHVpcmtzYXd5cnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc4MDQwNDcsImV4cCI6MjA1MzM4MDA0N30.gstA5viU7Ms6VsS-AjYjx3D08EAz5pD7tFHh2ZkV8_4';
+Future<void> main() async{
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supabaseKey,
+    storageOptions: const StorageClientOptions(
+      retryAttempts: 10,
+    ),
+  );
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -30,7 +40,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use the `ProviderScope` to provide the state to its descendants
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: lightTheme,

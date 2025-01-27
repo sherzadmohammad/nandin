@@ -1,0 +1,162 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../models/onbording_content.dart';
+import 'login_screen.dart';
+
+
+class OnBoarding extends StatefulWidget {
+  const OnBoarding({super.key});
+
+  @override
+  State<OnBoarding> createState() => _OnBoardingState();
+}
+
+class _OnBoardingState extends State<OnBoarding> {
+  int currentIndex = 0;
+  late PageController _controller;
+
+  @override
+  void initState() {
+    _controller = PageController(initialPage: 0);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<OnBoardingContent> contents = [
+      OnBoardingContent(
+          title: '',//AppLocalizations.of(context)!.board1_title,
+          special: 'FerPro',
+          image: 'assets/boarding1.svg',
+          description:
+          '',//AppLocalizations.of(context)!.board1_body
+      ),
+      OnBoardingContent(
+          title: '',//AppLocalizations.of(context)!.board2_title,
+          special: ' lesson',
+          image: 'assets/boarding2.svg',
+          description:
+          '',//AppLocalizations.of(context)!.board2_body
+      ),
+      OnBoardingContent(
+          title: '',//AppLocalizations.of(context)!.board3_title,
+          special: 'possible',
+          image: 'assets/boarding3.svg',
+          description:
+          '',//AppLocalizations.of(context)!.board3_body
+      ),
+    ];
+    return Scaffold(
+      backgroundColor:const Color(0XFFDCC1FF),
+      
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(6.0, 60.0, 6.0, 6.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+
+              Expanded(flex: 11,
+                child: PageView.builder(
+                  controller: _controller,
+                  itemCount: contents.length,
+                  onPageChanged: (int index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return ConstrainedBox(constraints: const BoxConstraints(maxHeight: 118),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Align(alignment:Alignment.center,
+                            child: SizedBox(width:307.0,height: 110.0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text( contents[index].title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,fontSize: 26,
+                                          color: Colors.black
+                                      ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                      contents[index].description,
+                                      textWidthBasis: TextWidthBasis.parent,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400
+                                      )
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 124.0,),
+                          SvgPicture.asset(
+                            contents[index].image,
+                            height: 300,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 50,),
+              Expanded(flex: 2,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(
+                        contents.length,
+                            (index) => buildDot(index, context),
+                      ),
+                    ),
+                    const SizedBox(height: 12.0,),
+                    if(currentIndex == 2)
+                    ElevatedButton(onPressed: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context)=> const LoginPage()
+                        ),
+                      );
+                    }, child:  Text('',))//AppLocalizations.of(context)!.board3_btn))
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+  }
+
+  Container buildDot(int index, BuildContext context) {
+    return Container(
+      height: 10,
+      width: currentIndex == index ? 25 : 10,
+      margin:const EdgeInsets.only(right: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: currentIndex == index ?Colors.black:Colors.white,
+      ),
+    );
+  }
+}

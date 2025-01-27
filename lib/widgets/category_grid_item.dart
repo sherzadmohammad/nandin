@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nanden/data/content_data.dart';
+import 'package:nanden/models/content_data.dart';
 class CategoryItem extends StatelessWidget {
   const CategoryItem({super.key,required this.category, required this.onSelected});
   final Category category;

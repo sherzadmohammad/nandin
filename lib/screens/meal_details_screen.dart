@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nanden/data/meal_data.dart';
 import 'package:nanden/providers/favorite_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+
+import '../models/meal_data.dart';
 class MealDetailsScreen extends ConsumerStatefulWidget {
   const MealDetailsScreen({super.key,required this.meal});
   final Meal meal;
