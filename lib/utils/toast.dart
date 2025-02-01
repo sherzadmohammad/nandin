@@ -5,7 +5,7 @@ void showToast({required BuildContext context, required String message}) {
   scaffold.clearSnackBars();
   scaffold.showSnackBar(
     SnackBar(
-      duration: Durations.extralong4,
+      duration: Duration(seconds: 3),
       content: Text(message),
       action: SnackBarAction(
           label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar,

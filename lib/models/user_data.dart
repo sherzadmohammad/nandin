@@ -1,69 +1,56 @@
-
-class User {
+class UserData {
   final int id;
   final String name;
   final String email;
-  final String emailVerifiedAt;
+  final bool hasVerifiedEmail;
   final String gender;
   final String mobile1;
-  final String address;
+  final String? address;
   final String academicLevel;
   final String? birthdate;
   final String profilePhotoPath;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  bool hasVerifiedEmail=false;
-  User({
+
+  UserData({
     required this.id,
     required this.name,
     required this.email,
-    required this.emailVerifiedAt,
+    required this.hasVerifiedEmail,
     required this.gender,
     required this.mobile1,
-    required this.address,
+    this.address,
     required this.academicLevel,
     this.birthdate,
     required this.profilePhotoPath,
-    this.createdAt,
-    this.updatedAt,
-    required this.hasVerifiedEmail,
   });
 
-  // Factory method to create a User from a JSON map
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id']??0,
-      name: json['name']??'',
-      email: json['email']??'',
-      emailVerifiedAt: json['email_verified_at']??'',
-      gender: json['gender']??'',
-      mobile1: json['mobile1']??'',
-      address: json['address']??'',
-      academicLevel: json['academic_level']??'',
-      birthdate: json['birthdate']??'',
-      profilePhotoPath: json['profile_photo_path']??'',
-      createdAt: DateTime.parse(json['created_at']??''),
-      updatedAt: DateTime.parse(json['updated_at']??''),
-      hasVerifiedEmail:false,
+  // Factory method to create a User from a Supabase response
+  factory UserData.fromJson(Map<String, dynamic> json) {
+    return UserData(
+      id: json['id'] as int,
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      hasVerifiedEmail: json['email_verified_at'] != null,
+      gender: json['gender'] as String? ?? '',
+      mobile1: json['mobile1'] as String? ?? '',
+      address: json['address'] as String?,
+      academicLevel: json['academic_level'] as String? ?? '',
+      birthdate: json['birthdate'] as String?,
+      profilePhotoPath: json['profile_photo_path'] as String? ?? '',
     );
   }
 
-  // Method to convert User back to JSON (optional)
+  // Method to convert User back to JSON for Supabase insert/update
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
       'email': email,
-      'email_verified_at': emailVerifiedAt,
       'gender': gender,
       'mobile1': mobile1,
       'address': address,
       'academic_level': academicLevel,
       'birthdate': birthdate,
       'profile_photo_path': profilePhotoPath,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
-      'hasVerifiedEmail':hasVerifiedEmail
     };
   }
 }

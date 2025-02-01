@@ -7,6 +7,8 @@ import 'package:nanden/services/api_services.dart';
 import 'package:nanden/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:nanden/screens/auth/register_screen.dart';
+import 'package:nanden/utils/toast.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../themes/input_field_decoration.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -36,7 +38,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 95.0, 16.0, 17.0),
@@ -50,14 +52,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '', //AppLocalizations.of(context)!.login_header,
+                        'Login', //AppLocalizations.of(context)!.login_header,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 12,),
-                      Text('', //AppLocalizations.of(context)!.login_title,
+                      Text('Let\'s log you in.', //AppLocalizations.of(context)!.login_title,
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400
@@ -78,7 +80,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       controller: _emailController,
                       style: InputFieldStyle().inputTextStyle,
                       decoration: InputFieldStyle().decoration(
-                        hint: '', //AppLocalizations.of(context)!.login_email_hint
+                        hint: 'email', //AppLocalizations.of(context)!.login_email_hint
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -104,7 +106,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           fontSize: 14, color: Color(0xFF1A1A1A)
                       ),
                       decoration: InputFieldStyle().passwordInputDecoration(
-                        '', //AppLocalizations.of(context)!.login_password_hint,
+                        'password', //AppLocalizations.of(context)!.login_password_hint,
                         isPasswordVisible: _isPasswordVisible,
                         togglePasswordVisibility: () {
                           setState(() {
@@ -125,11 +127,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ],
                 ),
               ),
-              Row(mainAxisAlignment: MainAxisAlignment.end,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () {},
-                    child: Text('',
+                    child: Text(
+                      'Forgot password?',
                       //AppLocalizations.of(context)!.login_forgetPassword_textButton,
                       style: const TextStyle(
                           fontSize: 12,
@@ -173,7 +177,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('', //AppLocalizations.of(context)!.login_label,
+                  Text('Login', //AppLocalizations.of(context)!.login_label,
                       style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -190,7 +194,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       );
                     },
                     child: Text(
-                      '',
+                      'Signup',
                       //AppLocalizations.of(context)!.login_signup_textButton,
                       style: const TextStyle(
                         fontSize: 14,
@@ -210,7 +214,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      '', //AppLocalizations.of(context)!.login_division_line,
+                      'Or', //AppLocalizations.of(context)!.login_division_line,
                       style: const TextStyle(color: Color(0XFF64748B)),),
                   ),
                   const Expanded(child: Divider(
@@ -282,7 +286,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ],
                       ),
                     ),
-                    const Text('All rights reserved © FerPro 2024',
+                    const Text('All rights reserved © Nanden 2024',
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 10,
@@ -290,7 +294,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     )
                   ],
                 ),
-              )
+              ),
 
             ],
           ),
@@ -298,45 +302,65 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ),
     );
   }
-
   void _login(WidgetRef ref) async {
     if (!_loginForm.currentState!.validate()) {
       return;
     }
     _loginForm.currentState!.save();
+
     try {
       setState(() {
         _isSigning = true;
       });
 
-      // Get the result from login
-      final result = await apiService.login(email!, password!);
+      // Perform Supabase login
+      final response = await Supabase.instance.client.auth.signInWithPassword(
+        email: email!,
+        password: password!,
+      );
 
-      if (result['success'] == true) {
-        final token = result['token'];
-        final role = result['role'];
+      // Check if login is successful
+      if (response.session != null) {
+        final user = response.user;
+        final token = response.session!.accessToken;
+
         if (kDebugMode) {
-          print('Login successful! Token: $token, Role: $role');
+          print('Login successful! Token: $token');
+          print('User ID: ${user?.id}');
         }
+
+        // Fetch user details from Supabase
         ref.read(userProvider.notifier).fetchUserDetails();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Login successful! Role: $role")),
-        );
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-              (Route<dynamic> route) => false,
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login failed: Invalid credentials")),
-        );
+
+        // Show success message
+        if (mounted) {
+          showToast(context: context, message: "Login successful! User ID: ${user?.id}");
+        }
+        // Navigate to home screen
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/home',
+                (route) => false,
+          );
+        }
+      }
+    } on AuthException catch (e) {
+      // Handle login failure
+      if (kDebugMode) {
+        print('Login failed: ${e.message}');
+      }
+      if (mounted) {
+        showToast(context: context, message: "Login failed: ${e.message}");
       }
     } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login failed: ${e.toString()}")),
-      );
+      // Handling any other exceptions
+      if (kDebugMode) {
+        print('Error during login: $e');
+      }
+      if (mounted) {
+        showToast(context: context, message: "Login failed: ${e.toString()}");
+      }
     } finally {
       setState(() {
         _isSigning = false;

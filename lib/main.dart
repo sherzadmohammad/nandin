@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nanden/screens/tabs.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nanden/screens/auth/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+//import 'package:nanden/l10n/l10n.dart';
 final darkTheme = ThemeData(
   useMaterial3: true,
+  scaffoldBackgroundColor: const Color.fromARGB(155, 94, 68, 56),
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.dark,
     seedColor: const Color.fromARGB(155, 131, 39, 0),
@@ -13,9 +15,10 @@ final darkTheme = ThemeData(
 
 final lightTheme = ThemeData(
   useMaterial3: true,
+  scaffoldBackgroundColor: Colors.white,
   colorScheme: ColorScheme.fromSeed(
-    brightness: Brightness.light,
-    seedColor: const Color.fromARGB(255, 131, 39, 0),
+    brightness: Brightness.dark,
+    seedColor: const Color.fromARGB(199, 224, 186, 169),
   ),
 );
 const supabaseUrl ='https://chaszkfcxuirksawyrrx.supabase.co';
@@ -41,11 +44,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      debugShowCheckedModeBanner: true,
+      theme: lightTheme,darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home: const TabsScreen(),
+      supportedLocales: const [
+        Locale('en'),
+        Locale('fa'),
+        Locale('ar')
+      ],
+      locale: const Locale('en'),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        ],
+      home: const SplashScreen(),
     );
   }
 }

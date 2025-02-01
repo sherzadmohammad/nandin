@@ -33,22 +33,22 @@ class _OnBoardingState extends State<OnBoarding> {
   Widget build(BuildContext context) {
     List<OnBoardingContent> contents = [
       OnBoardingContent(
-          title: '',//AppLocalizations.of(context)!.board1_title,
-          special: 'FerPro',
+          title: 'Make nice mail with us',//AppLocalizations.of(context)!.board1_title,
+          special: 'nanden',
           image: 'assets/boarding1.svg',
           description:
           '',//AppLocalizations.of(context)!.board1_body
       ),
       OnBoardingContent(
-          title: '',//AppLocalizations.of(context)!.board2_title,
-          special: ' lesson',
+          title: 'share your idae with cocking',//AppLocalizations.of(context)!.board2_title,
+          special: ' with other',
           image: 'assets/boarding2.svg',
           description:
           '',//AppLocalizations.of(context)!.board2_body
       ),
       OnBoardingContent(
-          title: '',//AppLocalizations.of(context)!.board3_title,
-          special: 'possible',
+          title: 'let\'s bring you start',//AppLocalizations.of(context)!.board3_title,
+          special: 'as possible',
           image: 'assets/boarding3.svg',
           description:
           '',//AppLocalizations.of(context)!.board3_body
@@ -75,13 +75,14 @@ class _OnBoardingState extends State<OnBoarding> {
                     });
                   },
                   itemBuilder: (context, index) {
-                    return ConstrainedBox(constraints: const BoxConstraints(maxHeight: 118),
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Align(alignment:Alignment.center,
-                            child: SizedBox(width:307.0,height: 110.0,
+                          Expanded(
+                            child: Align(alignment:Alignment.center,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -104,11 +105,11 @@ class _OnBoardingState extends State<OnBoarding> {
                               ),
                             ),
                           ),
-
-                          const SizedBox(height: 124.0,),
-                          SvgPicture.asset(
-                            contents[index].image,
-                            height: 300,
+                          Expanded(
+                            child: SvgPicture.asset(
+                              contents[index].image,
+                              fit:BoxFit.fill,
+                            ),
                           ),
                         ],
                       ),
@@ -136,7 +137,13 @@ class _OnBoardingState extends State<OnBoarding> {
                             builder: (context)=> const LoginPage()
                         ),
                       );
-                    }, child:  Text('',))//AppLocalizations.of(context)!.board3_btn))
+                    }, child:Text(
+                      'sssiiiiuuuuuu',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.0,
+                      ),
+                    ))//AppLocalizations.of(context)!.board3_btn))
                   ],
                 ),
               ),

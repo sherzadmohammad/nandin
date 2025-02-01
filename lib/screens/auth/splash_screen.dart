@@ -50,7 +50,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         );
       }
     }
-
     _hasNavigated = true;
   }
 
@@ -69,7 +68,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         height: double.infinity,
         child: Center(
           child: Text(
-            'FerPro',
+            'NANDEN',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 34,
