@@ -10,7 +10,7 @@ import 'package:nanden/screens/auth/register_screen.dart';
 import 'package:nanden/utils/toast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../themes/input_field_decoration.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -52,14 +52,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Login', //AppLocalizations.of(context)!.login_header,
+                        AppLocalizations.of(context)!.login_header,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 12,),
-                      Text('Let\'s log you in.', //AppLocalizations.of(context)!.login_title,
+                      Text(AppLocalizations.of(context)!.login_title,
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400
@@ -80,7 +80,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       controller: _emailController,
                       style: InputFieldStyle().inputTextStyle,
                       decoration: InputFieldStyle().decoration(
-                        hint: 'email', //AppLocalizations.of(context)!.login_email_hint
+                        hint:AppLocalizations.of(context)!.login_email_hint
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -106,7 +106,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           fontSize: 14, color: Color(0xFF1A1A1A)
                       ),
                       decoration: InputFieldStyle().passwordInputDecoration(
-                        'password', //AppLocalizations.of(context)!.login_password_hint,
+                        AppLocalizations.of(context)!.login_password_hint,
                         isPasswordVisible: _isPasswordVisible,
                         togglePasswordVisibility: () {
                           setState(() {
@@ -133,8 +133,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   TextButton(
                     onPressed: () {},
                     child: Text(
-                      'Forgot password?',
-                      //AppLocalizations.of(context)!.login_forgetPassword_textButton,
+                      AppLocalizations.of(context)!.login_forgetPassword_textButton,
                       style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -161,8 +160,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                        : Text(
-                      '', // AppLocalizations.of(context)!.login_btn,
+                        : Text( AppLocalizations.of(context)!.login_btn,
                       style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -177,7 +175,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Login', //AppLocalizations.of(context)!.login_label,
+                  Text(AppLocalizations.of(context)!.login_label,
                       style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -194,8 +192,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       );
                     },
                     child: Text(
-                      'Signup',
-                      //AppLocalizations.of(context)!.login_signup_textButton,
+                      AppLocalizations.of(context)!.login_signup_textButton,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -214,7 +211,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      'Or', //AppLocalizations.of(context)!.login_division_line,
+                      AppLocalizations.of(context)!.login_division_line,
                       style: const TextStyle(color: Color(0XFF64748B)),),
                   ),
                   const Expanded(child: Divider(
@@ -246,8 +243,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           width: 5,
                         ),
                         Text(
-                            '',
-                            //AppLocalizations.of(context)!.login_signupWithGoogle_btn,
+                            AppLocalizations.of(context)!.login_signupWithGoogle_btn,
                             style: const TextStyle(fontSize: 16.0,
                                 fontWeight: FontWeight.w500)
                         ),

@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/api_service_provider.dart';
 import '../../themes/input_field_decoration.dart';
 import '../../utils/toast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -53,13 +55,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    Text(
-                     '',//AppLocalizations.of(context)!.signup_header,
+                     AppLocalizations.of(context)!.signup_header,
                       style: const TextStyle(fontWeight: FontWeight.w600  ,fontSize:24,color: Colors.black87),
                   ),
                   const SizedBox(height:12.0,),
                    SizedBox(width: 200.0,
                     child: Text(
-                      '',//AppLocalizations.of(context)!.signup_header,
+                      AppLocalizations.of(context)!.signup_header,
                       style: const TextStyle(fontWeight: FontWeight.w400  ,fontSize:14,color: Colors.black87),
                     ),
                   ),
@@ -75,7 +77,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               child: TextFormField(
                                 controller: _firstnameController,
                                 style: InputFieldStyle().inputTextStyle,
-                                decoration:  InputFieldStyle().decoration(hint:'',),// AppLocalizations.of(context)!.signup_firstName_hint),
+                                decoration:  InputFieldStyle().decoration(hint: AppLocalizations.of(context)!.signup_firstName_hint),
                                 validator: (value){
                                   if(value==null||value.isEmpty){
                                     return 'this field require.';
@@ -92,7 +94,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               child: TextFormField(
                                 controller: _lastnameController,
                                 style: InputFieldStyle().inputTextStyle,
-                                decoration:  InputFieldStyle().decoration(hint: '',//AppLocalizations.of(context)!.signup_lastName_hint
+                                decoration:  InputFieldStyle().decoration(hint: AppLocalizations.of(context)!.signup_lastName_hint
                                 ),
                                 onSaved: (value){
                                   lastName=_lastnameController.text;
@@ -105,7 +107,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                         TextFormField(
                           controller: _emailController,
                           style: InputFieldStyle().inputTextStyle,
-                          decoration:  InputFieldStyle().decoration(hint:'',// AppLocalizations.of(context)!.signup_email_hint
+                          decoration:  InputFieldStyle().decoration(hint: AppLocalizations.of(context)!.signup_email_hint
                           ),
                           validator: (value){
                             if(value==null||value.isEmpty){
@@ -129,7 +131,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               fontSize: 14,color: Color(0xFF1A1A1A)
                           ),
                           decoration:  InputFieldStyle().passwordInputDecoration(
-                            '',//AppLocalizations.of(context)!.signup_password_hint,
+                            AppLocalizations.of(context)!.signup_password_hint,
                             isPasswordVisible: _isPasswordVisible,
                             togglePasswordVisibility: () {
                               setState(() {
@@ -155,7 +157,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               fontSize: 14,color: Color(0xFF1A1A1A)
                           ),
                           decoration:  InputFieldStyle().passwordInputDecoration(
-                            '',//AppLocalizations.of(context)!.signup_confirmPassword_hint,
+                            AppLocalizations.of(context)!.signup_confirmPassword_hint,
                             isPasswordVisible: _isConfirmPasswordVisible,
                             togglePasswordVisibility: () {
                               setState(() {
@@ -173,7 +175,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           },
                         ),
                         customHeight,
-                        Text('',//AppLocalizations.of(context)!.signup_gender_Female,
+                        Text(AppLocalizations.of(context)!.signup_gender_Female,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8.0,),
@@ -236,7 +238,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                         ),
                                         const SizedBox(width: 8.0),
                                         Text(
-                                            '',// AppLocalizations.of(context)!.signup_gender_male,
+                                             AppLocalizations.of(context)!.signup_gender_male,
                                             style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400)
                                         ),
                                       ],
@@ -261,7 +263,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           color: Colors.white,
                         )
                             :  Text(
-                          '',//AppLocalizations.of(context)!.signup_btn,
+                          AppLocalizations.of(context)!.signup_btn,
                           style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold),
@@ -272,7 +274,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                       Text('',//AppLocalizations.of(context)!.signup_having_account,
+                       Text(AppLocalizations.of(context)!.signup_having_account,
                           style:const TextStyle(
                               fontSize: 14,fontWeight: FontWeight.w400,color: Color(0XFF555F6D)
                           )
@@ -283,7 +285,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           Navigator.of(context).pop();
                         },
                         child:   Text(
-                          '',//AppLocalizations.of(context)!.signup_login_option,
+                          AppLocalizations.of(context)!.signup_login_option,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -301,11 +303,11 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                       children: [
                         RichText(textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: '',//AppLocalizations.of(context)!.signup_bottom_text1,
+                            text: AppLocalizations.of(context)!.signup_bottom_text1,
                             style: const TextStyle(color: Colors.black, fontSize: 10.0,fontWeight: FontWeight.w400),
                             children: <TextSpan>[
                               TextSpan(
-                                text: '',//AppLocalizations.of(context)!.signup_terms,
+                                text: AppLocalizations.of(context)!.signup_terms,
                                 style: const TextStyle(
                                   color: Color(0XFF9A58F0),
                                   fontWeight: FontWeight.w400,
@@ -321,7 +323,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             ],
                           ),
                         ),
-                        Text('',//AppLocalizations.of(context)!.signup_bottom_text2,
+                        Text(AppLocalizations.of(context)!.signup_bottom_text2,
                           style:const TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 10,
