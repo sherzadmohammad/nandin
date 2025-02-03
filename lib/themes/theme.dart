@@ -4,6 +4,7 @@ import 'package:nanden/themes/text_theme.dart';
 
 final ThemeData lightTheme=ThemeData(
     useMaterial3: false,
+    primaryColor: Colors.black,
     listTileTheme: const ListTileThemeData(
       horizontalTitleGap: 0.0,
       contentPadding: EdgeInsets.zero,

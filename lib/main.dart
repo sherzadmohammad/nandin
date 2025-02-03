@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nanden/screens/auth/login_screen.dart';
+import 'package:nanden/screens/auth/register_screen.dart';
 import 'package:nanden/screens/auth/splash_screen.dart';
+import 'package:nanden/screens/tabs.dart';
 import 'package:nanden/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nanden/l10n/l10n.dart';
@@ -41,7 +44,14 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         ],
-      home: const SplashScreen(),
+      initialRoute: '/',
+      routes: {
+      '/': (context) => SplashScreen(),
+      '/login': (context) => LoginPage(),
+      '/register': (context) => SignUpPage(),
+      '/home': (context)=> TabsScreen()
+  },
+
     );
   }
 }

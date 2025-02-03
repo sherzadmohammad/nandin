@@ -2,10 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/api_service_provider.dart';
+import 'package:intl/intl.dart';
 import '../../themes/input_field_decoration.dart';
 import '../../utils/toast.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 class SignUpPage extends ConsumerStatefulWidget {
@@ -20,13 +21,19 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  static const role="student";
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _birthdateController = TextEditingController();
+  static const role="user";
   late String userName;
   late String firstName;
-  late String selectedCity;
   late String email;
   late String password;
+  String? phone;
+  String? address;
   String? lastName;
+  String? selectedAcademicLevel;
+  String? birthdate;
   String? gender;
   bool isSigningUp = false;
   bool _isPasswordVisible=false;
@@ -39,6 +46,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     _lastnameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
   Widget customHeight = const SizedBox(height: 16.0,);
@@ -120,6 +128,90 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           },
                           onSaved: (value){
                             email=_emailController.text;
+                          },
+                        ),
+                        customHeight,
+                        TextFormField(
+                          controller: _phoneController,
+                          style: InputFieldStyle().inputTextStyle,
+                          keyboardType: TextInputType.phone,
+                          decoration:  InputFieldStyle().decoration(hint: 'Phone number (Optional)'
+                          ),
+                          validator: (value){
+                            if(value!=null&&value.isNotEmpty&&value.length!=10 ){
+                              return 'phone number must be 10 digit.';
+                            }
+                            return null;
+                          },
+                          onSaved: (value){
+                            phone=_phoneController.text;
+                          },
+                        ),
+                        customHeight,
+                        
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 7,
+                              child: DropdownButtonFormField<String>(
+                                value: selectedAcademicLevel,
+                                decoration: InputFieldStyle().decoration(hint: 'Academic level'),
+                                icon: const SizedBox.shrink(),
+                                items: academicLevels
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                validator: (value){
+                                  if(value == null) {
+                                    return 'Please select your academic level';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value){
+                                  selectedAcademicLevel = value!;
+                                },
+                                onChanged: (String? value) {
+                                  selectedAcademicLevel = value!;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10,),
+                            Expanded(
+                              flex: 4,
+                              child: GestureDetector( // Use GestureDetector instead of InkWell for better response
+                                onTap: () => _selectBirthdate(context),
+                                child: AbsorbPointer( // Prevents manual input but allows tap
+                                  child: TextFormField(
+                                    controller: _birthdateController,
+                                    decoration: InputFieldStyle().decoration(hint: 'Birthdate'),
+                                    readOnly: true, 
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please select your birthdate';
+                                      }
+                                      return null;
+                                    },
+                                    onSaved: (value) {
+                                      birthdate = _birthdateController.text;
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                        customHeight,
+                        TextFormField(
+                          controller: _addressController,
+                          style: InputFieldStyle().inputTextStyle,
+                          decoration:  InputFieldStyle().decoration(hint: 'Address'
+                          ),
+                          onSaved: (value){
+                            address=_addressController.text;
                           },
                         ),
                         customHeight,
@@ -340,36 +432,93 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       ),
     );
   }
-  void _register(WidgetRef ref) async {
-    final apiService = ref.read(apiServiceProvider);
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    _formKey.currentState!.save();
-    userName='$firstName $lastName';
-    setState(() {
-      isSigningUp = true;
-    });
 
-    final result = await apiService.register(userName, email, password, role);
+Future<void> _register(WidgetRef ref) async {
+  final supabaseClient = Supabase.instance.client;
 
-    if (result['success'] == true) {
-      if (kDebugMode) {
-        print("successfully signed in please now login your self");
-      }
-      if(mounted) {
-        showToast(context: context,
-            message: "successfully signed in please now login your self");
+  // Validate the form fields
+  if (!_formKey.currentState!.validate()) {
+    return;
+  }
+  _formKey.currentState!.save();
+  userName = '$firstName $lastName';
 
+  // Show loading state
+  setState(() {
+    isSigningUp = true;
+  });
+
+  try {
+    // Register user with Supabase Auth
+    final response = await supabaseClient.auth.signUp(
+      email: email,
+      password: password,
+      data: {
+        'name': userName,
+        'phone': phone,
+        'academic_level': selectedAcademicLevel,
+        'address': address,
+        'birthdate': birthdate,
+        'profile_photo_path': '', // Placeholder if no image is provided
+      },
+    );
+
+    if (response.session == null && response.user != null) {
+      // Successfully signed up, prompt user to log in
+      if (mounted) {
+        showToast(context: context, message: "Successfully signed up. Please log in.");
+        if(kDebugMode){
+          print("Successfully signed up. Please log in.");
+        }
         Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       }
     } else {
-      if(mounted) {
-        showToast(context: context, message: "sorry can't sign in");
+      // Sign-up failed
+      if (mounted) {
+        showToast(context: context, message: "Failed to register user. Please try again.");
+        if(kDebugMode){
+          print("Failed to register user. Please try again.");
+        }
       }
     }
+  } catch (e) {
+    // Handle any errors
+    if (mounted) {
+      showToast(context: context, message: "An error occurred: ${e.toString()}");
+      if(kDebugMode){
+          print("An error occurred: ${e.toString()}");
+        }
+    }
+  } finally {
+    // Hide loading state
     setState(() {
       isSigningUp = false;
     });
   }
+}
+Future<void> _selectBirthdate(BuildContext context) async {
+  DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+  );
+
+  if (pickedDate != null && mounted) {
+    setState(() {
+      birthdate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      _birthdateController.text=birthdate.toString();
+    });
+  }
+}
+
+List<String> academicLevels = [
+  'Beginner',  // For users new to cooking
+  'Intermediate',  // For users with some cooking experience
+  'Advanced',  // For experienced cooks
+  'Professional Chef',  // For users pursuing a professional cooking career
+  'Culinary School Graduate',  // For users who have completed formal cooking training
+];
+
+
 }
