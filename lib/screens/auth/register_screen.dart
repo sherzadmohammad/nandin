@@ -453,9 +453,9 @@ Future<void> _register(WidgetRef ref) async {
     final response = await supabaseClient.auth.signUp(
       email: email,
       password: password,
+      //phone: phone,
       data: {
         'name': userName,
-        'phone': phone,
         'academic_level': selectedAcademicLevel,
         'address': address,
         'birthdate': birthdate,

@@ -299,68 +299,66 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
   void _login(WidgetRef ref) async {
-    if (!_loginForm.currentState!.validate()) {
+  if (!_loginForm.currentState!.validate()) {
+    return;
+  }
+  _loginForm.currentState!.save();
+
+  setState(() {
+    _isSigning = true;
+  });
+
+  try {
+    // Perform Supabase login
+    final response = await Supabase.instance.client.auth.signInWithPassword(
+      email: email!,
+      password: password!,
+    );
+
+    // Check if login is successful
+    if (response.session == null || response.user == null) {
+      if (mounted) {
+        showToast(context: context, message: "Invalid email or password.");
+      }
       return;
     }
-    _loginForm.currentState!.save();
 
-    try {
-      setState(() {
-        _isSigning = true;
-      });
+    final user = response.user!;
+    final token = response.session!.accessToken;
 
-      // Perform Supabase login
-      final response = await Supabase.instance.client.auth.signInWithPassword(
-        email: email!,
-        password: password!,
-      );
+    if (kDebugMode) {
+      print('Login successful! Token: $token');
+      print('User ID: ${user.id}');
+    }
 
-      // Check if login is successful
-      if (response.session != null) {
-        final user = response.user;
-        final token = response.session!.accessToken;
+    // Fetch user details from Supabase
+    ref.read(userProvider.notifier).fetchUserDetails();
 
-        if (kDebugMode) {
-          print('Login successful! Token: $token');
-          print('User ID: ${user?.id}');
-        }
-
-        // Fetch user details from Supabase
-        ref.read(userProvider.notifier).fetchUserDetails();
-
-        // Show success message
-        if (mounted) {
-          showToast(context: context, message: "Login successful! User ID: ${user?.id}");
-        }
-        // Navigate to home screen
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/home',
-                (route) => false,
-          );
-        }
-      }
-    } on AuthException catch (e) {
-      // Handle login failure
-      if (kDebugMode) {
-        print('Login failed: ${e.message}');
-      }
-      if (mounted) {
-        showToast(context: context, message: "Login failed: ${e.message}");
-      }
-    } catch (e) {
-      // Handling any other exceptions
-      if (kDebugMode) {
-        print('Error during login: $e');
-      }
-      if (mounted) {
-        showToast(context: context, message: "Login failed: ${e.toString()}");
-      }
-    } finally {
+    if (mounted) {
+      showToast(context: context, message: "Login successful!");
+      // Navigate to home screen
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    }
+  } on AuthException catch (e) {
+    if (kDebugMode) {
+      print('Login failed: ${e.message}');
+    }
+    if (mounted) {
+      showToast(context: context, message: "Login failed: ${e.message}");
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Unexpected error: $e');
+    }
+    if (mounted) {
+      showToast(context: context, message: "An unexpected error occurred.");
+    }
+  } finally {
+    if (mounted) {
       setState(() {
         _isSigning = false;
       });
     }
   }
+}
 }
