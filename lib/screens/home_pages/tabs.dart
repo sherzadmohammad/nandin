@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/constants/loading_data.dart';
+import 'package:nanden/screens/home_pages/profile_section.dart';
 import '../../providers/favorite_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,15 +36,18 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
 
     return userAsyncValue.when(
       data: (user) {
-        if (_currentScreen == 1) {
+        if (_currentScreen == 0) {
+          activeScreen = MainBodyScreen(availableMeals: filteredMeals);
+          
+          activeScreenTitle = 'Favorite';
+        } else if(_currentScreen == 1){
           activeScreen = MealsScreen(
             title: "Favorite",
             meals: favoriteMeal,
           );
-          activeScreenTitle = 'Favorite';
-        } else {
-          activeScreen = MainBodyScreen(availableMeals: filteredMeals);
           activeScreenTitle = 'Category';
+        }else{
+          activeScreen = ProfileSection(user: user);
         }
 
         return Scaffold(
@@ -84,7 +88,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
                   label: AppLocalizations.of(context)!.bottomNavigationItems_profile,
                   icon: Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==3)
+                      child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==2)
                   ),
                 ),
               ]
