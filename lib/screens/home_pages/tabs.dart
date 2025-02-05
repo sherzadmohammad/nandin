@@ -49,49 +49,48 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
         }else{
           activeScreen = ProfileSection(user: user);
         }
-
         return Scaffold(
-          appBar: AppBar(
-            title: Text(activeScreenTitle),
-          ),
-          body: activeScreen,
-          bottomNavigationBar:BottomNavigationBar(
-              selectedItemColor: _selectedColor,
-              unselectedItemColor: _unselectedColor,
-              backgroundColor: Colors.white,
-              useLegacyColorScheme: false,
-              type:BottomNavigationBarType.fixed,
-              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500,fontSize: 12.0,),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 12.0,),
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-              iconSize: 20.0,
-              currentIndex:_currentScreen,
-              elevation: 0,
-              onTap: _selectScreen,
-              items:   [
-                BottomNavigationBarItem(
-                  label: AppLocalizations.of(context)!.bottomNavigationItems_home,
-                  icon: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: _buildSvgIcon('assets/icons/bottomSheet_home.svg',_currentScreen==0),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  label: AppLocalizations.of(context)!.bottomNavigationItems_schedule,
-                  icon: Padding(
+          
+          body: SafeArea(child: activeScreen),
+          bottomNavigationBar:SizedBox(height: 80.0,
+            child: BottomNavigationBar(
+                selectedItemColor: _selectedColor,
+                unselectedItemColor: _unselectedColor,
+                backgroundColor: Colors.white,
+                useLegacyColorScheme: false,
+                type:BottomNavigationBarType.fixed,
+                selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500,fontSize: 12.0,),
+                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 12.0,),
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
+                iconSize: 20.0,
+                currentIndex:_currentScreen,
+                elevation: 20,
+                onTap: _selectScreen,
+                items:   [
+                  BottomNavigationBarItem(
+                    label: AppLocalizations.of(context)!.bottomNavigationItems_home,
+                    icon: Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
-                      child: _buildSvgIcon('assets/icons/star.svg', _currentScreen==1)
+                      child: _buildSvgIcon('assets/icons/bottomSheet_home.svg',_currentScreen==0),
+                    ),
                   ),
-                ),
-                BottomNavigationBarItem(
-                  label: AppLocalizations.of(context)!.bottomNavigationItems_profile,
-                  icon: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==2)
+                  BottomNavigationBarItem(
+                    label: AppLocalizations.of(context)!.bottomNavigationItems_schedule,
+                    icon: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _buildSvgIcon('assets/icons/star.svg', _currentScreen==1)
+                    ),
                   ),
-                ),
-              ]
+                  BottomNavigationBarItem(
+                    label: AppLocalizations.of(context)!.bottomNavigationItems_profile,
+                    icon: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==2)
+                    ),
+                  ),
+                ]
+            ),
           ),
         );
       },

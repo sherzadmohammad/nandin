@@ -1,10 +1,10 @@
 class UserData {
-  final String id; // UUID
+  final String id;
   final String name;
   final String email;
   final bool hasVerifiedEmail;
   final String gender;
-  final String mobile; // Changed to match Supabase field
+  final String mobile;
   final String? address;
   final String academicLevel;
   final String? birthdate;
@@ -25,22 +25,19 @@ class UserData {
 
   // Factory method to create a User from Supabase response
   factory UserData.fromJson(Map<String, dynamic> json) {
-  final rawUserData = json['raw_user_meta_data'] ?? {}; // Safe access to raw_user_meta_data
-
   return UserData(
-    id: json['id'] as String? ?? '', 
-    name: rawUserData['name'] as String? ?? '',
-    email: json['email'] as String? ?? '',
+    id: json['id'] ?? '', 
+    name: json['name'] ?? '',
+    email: json['email'] ?? '',
     hasVerifiedEmail: json['email_verified'] == true,
-    gender: rawUserData['gender'] as String? ?? '',
-    mobile: rawUserData['phone'] as String? ?? '',
-    address: rawUserData['address'] as String?,
-    academicLevel: rawUserData['academic_level'] as String? ?? '',
-    birthdate: rawUserData['birthdate'] as String?,
-    userAvatarPath: rawUserData['profile_photo_path'] as String? ?? '',
+    gender: json['gender'] ?? '',
+    mobile: json['phone'] ?? '',
+    address: json['address'] ,
+    academicLevel: json['academic_level'] ?? '',
+    birthdate: json['birthdate'] as String?,
+    userAvatarPath: json['profile_photo_path'] ?? '',
   );
 }
-
 
   // Convert UserData to JSON for Supabase insert/update
   Map<String, dynamic> toJson() {

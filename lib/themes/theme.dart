@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:nanden/themes/text_theme.dart';
 
 final ThemeData lightTheme=ThemeData(
-    useMaterial3: false,
+    useMaterial3: true,
+    scaffoldBackgroundColor: const Color(0xFFF1F6FA),
     primaryColor: Colors.black,
     listTileTheme: const ListTileThemeData(
       horizontalTitleGap: 0.0,
@@ -26,5 +27,3 @@ final ThemeData lightTheme=ThemeData(
   ),
 );
 const Color materialButtonColor=Colors.black87;
-
-

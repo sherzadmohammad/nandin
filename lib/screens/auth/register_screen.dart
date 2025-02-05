@@ -24,7 +24,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _birthdateController = TextEditingController();
-  static const role="user";
   late String userName;
   late String firstName;
   late String email;

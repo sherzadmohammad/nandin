@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nanden/screens/auth/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Add Supabase package
 import '../../providers/user_provider.dart'; // Assuming this remains the same
 import 'onboarding.dart'; // Assuming this remains the same
@@ -41,14 +43,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         );
       }
     } else {
-      // User is not authenticated
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const OnBoarding()),
-              (route) => false,
-        );
-      }
+      // User is not authenticated, check if onboarding is completed
+    final prefs = await SharedPreferences.getInstance();
+    final hasCompletedOnboarding = prefs.getBool('hasCompletedOnboarding') ?? false;
+
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              hasCompletedOnboarding ? const LoginScreen() : const OnBoarding(),
+        ),
+        (route) => false,
+      );
+    }
     }
     _hasNavigated = true;
   }
