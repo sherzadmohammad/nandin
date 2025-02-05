@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nanden/models/models.dart';
 import 'package:nanden/widgets/category_grid_item.dart';
-import 'package:nanden/screens/meals_screen.dart';
-import '../models/content_data.dart';
-import '../models/meal_data.dart';
+import 'package:nanden/screens/home_pages/meals_screen.dart';
+import '../../models/content_data.dart';
+import '../../models/meal_data.dart';
 class MainBodyScreen extends StatefulWidget {
   const MainBodyScreen({super.key, required this.availableMeals});
   final List<Meal> availableMeals;

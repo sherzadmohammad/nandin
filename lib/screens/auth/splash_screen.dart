@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'; // Add Supabase package
 import '../../providers/user_provider.dart'; // Assuming this remains the same
 import 'onboarding.dart'; // Assuming this remains the same
-import '../../screens/tabs.dart'; // Assuming this remains the same
+import '../home_pages/tabs.dart'; // Assuming this remains the same
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

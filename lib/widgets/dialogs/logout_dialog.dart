@@ -1,24 +1,35 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/api_service_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../providers/user_provider.dart';
 
 class LogoutDialog extends ConsumerWidget {
   const LogoutDialog({super.key});
-
-
-  void performLogout(BuildContext context,WidgetRef ref) async {
-    final apiService = ref.read(apiServiceProvider);
-    await apiService.logout();
+  
+  void performLogout(BuildContext context, WidgetRef ref) async {
+  try {
+    // Perform Supabase logout
+    await Supabase.instance.client.auth.signOut();
+    
+    // Clear user data from provider
     ref.read(userProvider.notifier).clearUserData();
-    if(context.mounted) {
+
+    // Navigate back to the login screen
+    if (context.mounted) {
       Navigator.pushNamedAndRemoveUntil(
         context,
         '/login',
-            (Route<dynamic> route) => false,
+        (Route<dynamic> route) => false,
       );
     }
+  } catch (e) {
+    if (kDebugMode) {
+      print("Logout failed: $e");
+    }
   }
+}
+
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {

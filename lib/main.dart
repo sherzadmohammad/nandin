@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nanden/screens/auth/login_screen.dart';
 import 'package:nanden/screens/auth/register_screen.dart';
 import 'package:nanden/screens/auth/splash_screen.dart';
-import 'package:nanden/screens/tabs.dart';
+import 'package:nanden/screens/home_pages/tabs.dart';
 import 'package:nanden/themes/theme.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nanden/l10n/l10n.dart';

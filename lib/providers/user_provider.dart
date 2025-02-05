@@ -10,25 +10,38 @@ class UserNotifier extends StateNotifier<AsyncValue<UserData>> {
 
   /// Fetches user details from Supabase and updates the state.
   Future<void> fetchUserDetails() async {
-    try {
-      // Fetch user details from Supabase
-      final response = await _supabaseClient.from('users').select().single();
+  try {
+    // Fetch the current authenticated user
+    final userResponse = await _supabaseClient.auth.getUser();
 
+    // Access the user object and its metadata
+    final user = userResponse.user;
+    final rawUserData = user?.userMetadata;
+
+    if (rawUserData != null) {
       // Parse the response into a User object
-      final user = UserData.fromJson(response);
+      final userData = UserData.fromJson(rawUserData);
+
       if (kDebugMode) {
-        print("Successfully fetched user details from Supabase: ${user.name}");
+        print("Successfully fetched user details from Supabase: ${userData.name}");
       }
 
       // Update the state with the fetched user
-      state = AsyncValue.data(user);
-    } catch (e, stackTrace) {
+      state = AsyncValue.data(userData);
+    } else {
       if (kDebugMode) {
-        print("Error fetching user details from Supabase: $e");
+        print("No user metadata available in user-provider file.");
       }
-      state = AsyncValue.error(e, stackTrace);
+      state = const AsyncValue.error("User metadata not found",StackTrace.empty);
     }
+  } catch (e, stackTrace) {
+    if (kDebugMode) {
+      print("Error fetching user details from Supabase: $e");
+    }
+    state = AsyncValue.error(e, stackTrace);
   }
+}
+
 
   /// Clears the current user data, typically used during logout.
   void clearUserData() {

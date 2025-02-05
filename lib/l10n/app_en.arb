@@ -1,4 +1,9 @@
+
 {
+    "home_trending": "New and Trending",
+    "home_promoted": "Promoted",
+    "home_popular": "popular teacher",
+  
     "board1_title": "Find the right fit for you with our Tutors",
     "board1_body": "With over 30,000 tutors and 1M+ learners, we know language learning.",
     "board2_title": "Get better with every lesson",
@@ -6,7 +11,7 @@
     "board3_title": "Practice makes possible",
     "board3_body": "Learning is a journey. We'll be with you every step of the way.",
     "board3_btn": "Get started",
-
+  
     "login_header": "Let’s sign you in",
     "login_title": "Welcome back beautiful, You have been missed",
     "login_email_hint": "Enter your email",
@@ -17,7 +22,7 @@
     "login_signup_textButton": "Sign up",
     "login_division_line": "or",
     "login_signupWithGoogle_btn": "Sign up with google",
-
+  
     "signup_header": "Let’s Register Account",
     "signup_title": "Hello beautiful, let’s find what’s happening near you",
     "signup_firstName_hint": "First name",
@@ -34,5 +39,197 @@
     "signup_login_option": "Login",
     "signup_bottom_text1": "By using this app you agree to the",
     "signup_terms": "Terms and Condition",
-    "signup_bottom_text2": "All rights reserved © FerPro 2024"
-}
+    "signup_bottom_text2": "All rights reserved © FerPro 2024",
+  
+    "otpCode_appbar": "Verification",
+    "otpCode_header": "Almost there!",
+    "otpCode_title": "Enter the OTP code we just sent you on your Email address",
+    "otpCode_btn": "Verify",
+    "otpCode_bottom_text1": "Didn't Receive Code",
+    "otpCode_resend": "Resend Code",
+    "otpCode_bottom_text2": "Resend code in",
+  
+    "forgetPassword_appbar": "Forget password",
+    "forgetPassword_header": "Forget your password?",
+    "forgetPassword_title": "Enter your email address we will send you instruction to reset your password",
+    "forgetPassword_hint": "Enter your text",
+    "forgetPassword_btn": "send code",
+    "forgetPassword_alert_title": "Check your email",
+    "forgetPassword_alert_body": "We have send password recovery instruction to your email",
+  
+  
+    "newPassword_appbar": "New Password",
+    "newPassword_header": "Create new password",
+    "newPassword_title": "Choose a new password for",
+    "newPassword_password_hint": "New Password",
+    "newPassword_confirm_password": "Confirm new password",
+    "newPassword_btn": "change password",
+  
+    "newPassword_alert_title": "password updated",
+    "newPassword_alert_body": "Please press sign in to continue",
+    "newPassword_alert_btn": "sign in",
+  
+    "bottomNavigationItems_home": "home",
+    "bottomNavigationItems_search": "search",
+    "bottomNavigationItems_message": "message",
+    "bottomNavigationItems_schedule": "schedule",
+    "bottomNavigationItems_profile": "profile",
+  
+    "chipFilters_constant": "Filters:",
+    "chipFilters_location": "Location",
+    "chipFilters_category": "Category",
+    "chipFilters_price": "Price",
+    "chipFilters_date": "Date",
+    "chipFilters_rating": "Rating",
+    "chipFilters_all": "All",
+    "chipFilters_onClass": "On-Class",
+    "chipFilters_group": "Group",
+    "chipFilters_private": "Private",
+    "chipFilters_online": "Online",
+  
+  
+    "notification_appbar": "Notification",
+    "notification_off_header": "Allow notifications",
+    "notification_off_title": "Turn on notifications to get class recommendations and updates, No spam! We Promise.",
+    "notification_off_btn": "Turn On",
+    "notification_empty_header": "No notification yet",
+    "notification_empty_title": "We’ll notify you here for upcoming Classes and other important updates.",
+    "notification_btn_delete": "Delete Notification",
+  
+  
+    "details_available": "Available in",
+    "details_language": "Course Language",
+    "details_course_teacher": "Course Teacher",
+    "details_description": "Description",
+    "details_btn": "Join the course",
+  
+    "reviews_appbar": "Reviews",
+    "reviews_rating": "From people",
+  
+    "schedule_appbar": "Schedule",
+    "courseSchedule_seeAll_btn": "See All",
+    "courseSchedule_choose_day_text": "Course dates are scheduled for these days.",
+    "courseSchedule_choose_time_text": "Choose a suitable class time.",
+    "courseSchedule_morning": "Morning",
+    "courseSchedule_afternoon": "Afternoon",
+    "courseSchedule_noClass_title": "No classes on schedule today",
+    "courseSchedule_noClass_body": "Swipe for available times on other days",
+  
+    "teacherProfile_experience": "Experience",
+    "teacherProfile_student": "Student",
+    "teacherProfile_available": "Available in",
+    "teacherProfile_message_btn": "Message",
+    "teacherProfile_schedule_btn": "See Schedule",
+  
+    "message_appbar": "Message",
+    "message_header": "Really,no question?",
+    "message_title": "Here you can ask your teachers anything, or discuss your learning goal.",
+    "message_btn": "Find a teacher",
+  
+  
+    "conversation_body": "Send a friendly message to this teacher, share your goals, and get feedback.",
+    "conversation_chat_hint": "Your message",
+  
+    "schedule_header": "You’ll see your tutors and lesson schedule here",
+    "schedule_title": "Your lesson schedule is the path to success. Find a teacher and book your first lesson to start",
+    "schedule_btn": "Find a teacher",
+    "schedule_current_classes": "Current classes",
+    "schedule_completed_classes": "Completed classes",
+    "schedule_onGoing": "on Going",
+    "profile_hello": "Hello",
+    "profile_profile": "Profile",
+    "profile_changePassword": "Change Password",
+    "profile_courses_record": "Courses Record",
+    "profile_courses": "Courses",
+    "profile_terms": "Support and Terms",
+    "profile_language": "Language",
+    "profile_rating": "Rate the FerPro App",
+    "profile_about": "About FerPro",
+    "profile_notifications": "Notifications",
+    "profile_notifications_off_text": "Turn on notifications to get class recommendations and updates, No spam! We Promise.",
+    "profile_app_version": "App Version 1.0.1",
+  
+    "editProfile_btn": "Save Changes",
+    "editProfile_delete_btn": "Delete Account",
+  
+    "about_appbar": "About FerPro",
+    "about_us": "About Us",
+    "about_us_body": "Lorem ipsum dolor sit amet consectetur. Adipiscing accumsan velit nunc facilisi. Phasellus mattis hgu pharetra praesent ornare consequat congue, hjjjolg bhbhh Elementum cras nibh laoreet pretium fusce, Adipiscing blandit quis varius.",
+    "about_vision": "FerPro's Vision",
+    "about_vision_body": "Lorem ipsum dolor sit amet consectetur. Adipiscing accumsan velit nunc facilisi. Phasellus mattis hgu pharetra praesent ornare consequat congue, hjjjolg bhbhh Elementum cras nibh laoreet pretium fusce, Adipiscing blandit quis varius.Lorem ipsum dolor sit amet consectetur. Adipiscing accumsan velit nunc facilisi. Phasellus mattis hgu pharetra praesent ornare consequat congue, hjjjolg bhbhh Elementum cras nibh laoreet pretium fusce, Adipiscing blandit quis varius.",
+    "about_mission": "FerPro's Mission",
+    "about_ul": "laoreet pretium fusce, Adipiscing blandit quis  edudeb",
+  
+  
+    "courses_appbar": "Courses",
+    "courses_current": "Current",
+    "courses_completed": "Completed",
+    "courses_noCurrent_body": "It seems like you haven't participated in any courses yet.",
+    "courses_noCompleted_body": "It looks like you haven't completed any course yet.",
+  
+    "noInternet_title": "You are offline",
+    "noInternet_body": "Please try again when you're back online to check for updates on Available classes..",
+    "noInternet_btn": "Try again",
+  
+    "cities_none":"None",
+    "cities_baghdad":"Baghdad",
+    "cities_erbil":"Erbil",
+    "cities_sulaimanyah":"Sulaimanyah",
+    "cities_duhok":"Duhok",
+    "cities_zaxo":"Zaxo",
+    "cities_basra":"Basra",
+    "cities_mosul":"Mosul",
+    "cities_kirkuk":"Kirkuk",
+    "cities_najaf":"Najaf",
+    "cities_kut":"Kut",
+  
+    "delete_title_dialog": "Delete Chat",
+    "delete_body_dialog": "Delete this chat permanently?",
+    "logout_title_dialog": "Log out",
+    "logout_body_dialog": "Are you sure you want to log out?",
+    "cancel_btn_dialog": "Cancel",
+    "ok_btn_dialog": "Log out",
+    "continue_btn": "Continue",
+    "warning_title_dialog": "WARNING!",
+    "warning_body_dialog": "Are you sure you want to delete your account? this cannot be undone.",
+    "warning_yes_btn": "yes,i want to delete my account",
+    "warning_no_btn": "No, I’ll give FerPro another try",
+  
+    "bottomSheet_location_title": "Location",
+    "bottomSheet_price_title": "Per Class Price",
+    "bottomSheet_price_body": "Select your Preferred price range",
+    "bottomSheet_subjects_title": "Class Subjects",
+    "bottomSheet_subjects_body": "Select your preferred subject of interest to enroll.",
+  
+    "bottomSheet_rating_title": "Course Ratings",
+    "bottomSheet_removeAll_btn": "Remove All",
+    "bottomSheet_btn": "Show Results",
+  
+  
+    "bottomSheet_camera": "Take a photo",
+    "bottomSheet_library": "Choose from Gallery",
+    "bottomSheet_removePhoto": "Remove current photo",
+  
+  
+    "generalReviews": "General Reviews",
+    "showMore_btn": "Read more",
+    "listTile_side_btn_delete": "Delete",
+  
+  
+     "time_ago_just_now": "just now",
+      "time_ago_seconds": "{seconds}s ago",
+      "time_ago_minute": "a minute ago",
+      "time_ago_minutes": "{minutes}m ago",
+      "time_ago_hour": "an hour ago",
+      "time_ago_hours": "{hours}h ago",
+      "time_ago_day": "yesterday",
+      "time_ago_days": "{days}d ago",
+      "time_ago_week": "a week ago",
+      "time_ago_weeks": "{weeks}w ago",
+      "time_ago_month": "a month ago",
+      "time_ago_months": "{months}m ago",
+      "time_ago_year": "a year ago",
+      "time_ago_years": "{years}y ago"
+  
+  }
+  

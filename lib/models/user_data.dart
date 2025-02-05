@@ -1,10 +1,10 @@
 class UserData {
-  final String id; // UUID instead of int
+  final String id; // UUID
   final String name;
   final String email;
   final bool hasVerifiedEmail;
   final String gender;
-  final String mobile; // Changed from mobile1 to match Supabase table
+  final String mobile; // Changed to match Supabase field
   final String? address;
   final String academicLevel;
   final String? birthdate;
@@ -25,19 +25,22 @@ class UserData {
 
   // Factory method to create a User from Supabase response
   factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(
-      id: json['id'] as String, // UUID is a String
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      hasVerifiedEmail: json['email_verified_at'] != null,
-      gender: json['gender'] ?? '',
-      mobile: json['mobile'] ?? '', // Changed to match Supabase field
-      address: json['address'],
-      academicLevel: json['academic_level'] ?? '',
-      birthdate: json['birthdate'],
-      userAvatarPath: json['profile_photo_path'] ?? '',
-    );
-  }
+  final rawUserData = json['raw_user_meta_data'] ?? {}; // Safe access to raw_user_meta_data
+
+  return UserData(
+    id: json['id'] as String? ?? '', 
+    name: rawUserData['name'] as String? ?? '',
+    email: json['email'] as String? ?? '',
+    hasVerifiedEmail: json['email_verified'] == true,
+    gender: rawUserData['gender'] as String? ?? '',
+    mobile: rawUserData['phone'] as String? ?? '',
+    address: rawUserData['address'] as String?,
+    academicLevel: rawUserData['academic_level'] as String? ?? '',
+    birthdate: rawUserData['birthdate'] as String?,
+    userAvatarPath: rawUserData['profile_photo_path'] as String? ?? '',
+  );
+}
+
 
   // Convert UserData to JSON for Supabase insert/update
   Map<String, dynamic> toJson() {
@@ -46,7 +49,7 @@ class UserData {
       'name': name,
       'email': email,
       'gender': gender,
-      'mobile': mobile, // Changed key to match Supabase
+      'phone': mobile, // Adjust to match Supabase
       'address': address,
       'academic_level': academicLevel,
       'birthdate': birthdate,
