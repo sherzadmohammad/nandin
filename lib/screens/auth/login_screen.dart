@@ -11,14 +11,14 @@ import 'package:nanden/utils/toast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../themes/input_field_decoration.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginScreen> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginScreen> {
   bool _isSigning = false;
   final ApiService apiService = ApiService();
   final TextEditingController _emailController = TextEditingController();
