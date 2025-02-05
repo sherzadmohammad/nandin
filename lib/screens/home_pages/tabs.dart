@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/constants/loading_data.dart';
 import '../../providers/favorite_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../providers/filters_provider.dart';
-import 'filters_screen.dart';
 import 'main_body_screen.dart';
 import 'meals_screen.dart';
-import '../../widgets/main_drawer.dart';
 
 class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
@@ -15,11 +15,12 @@ class TabsScreen extends ConsumerStatefulWidget {
   ConsumerState<TabsScreen> createState() => _TabsScreenState();
 }
 class _TabsScreenState extends ConsumerState<TabsScreen> {
-  int _selectedScreenIndex = 0;
-
+  final Color _selectedColor = const Color(0xFF1A1A1A);
+  final Color _unselectedColor = const Color(0xFF6C6C6C);
+  int _currentScreen = 0;
   void _selectScreen(int index) {
     setState(() {
-      _selectedScreenIndex = index;
+      _currentScreen = index;
     });
   }
 
@@ -34,7 +35,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
 
     return userAsyncValue.when(
       data: (user) {
-        if (_selectedScreenIndex == 1) {
+        if (_currentScreen == 1) {
           activeScreen = MealsScreen(
             title: "Favorite",
             meals: favoriteMeal,
@@ -50,13 +51,43 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
             title: Text(activeScreenTitle),
           ),
           body: activeScreen,
-          bottomNavigationBar: BottomNavigationBar(
-            onTap: _selectScreen,
-            currentIndex: _selectedScreenIndex,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.set_meal), label: 'Category'),
-              BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favorite'),
-            ],
+          bottomNavigationBar:BottomNavigationBar(
+              selectedItemColor: _selectedColor,
+              unselectedItemColor: _unselectedColor,
+              backgroundColor: Colors.white,
+              useLegacyColorScheme: false,
+              type:BottomNavigationBarType.fixed,
+              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500,fontSize: 12.0,),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w400,fontSize: 12.0,),
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              iconSize: 20.0,
+              currentIndex:_currentScreen,
+              elevation: 0,
+              onTap: _selectScreen,
+              items:   [
+                BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.bottomNavigationItems_home,
+                  icon: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: _buildSvgIcon('assets/icons/bottomSheet_home.svg',_currentScreen==0),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.bottomNavigationItems_schedule,
+                  icon: Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: _buildSvgIcon('assets/icons/star.svg', _currentScreen==1)
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  label: AppLocalizations.of(context)!.bottomNavigationItems_profile,
+                  icon: Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==3)
+                  ),
+                ),
+              ]
           ),
         );
       },
@@ -67,6 +98,17 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
           style:Theme.of(context).textTheme.headlineLarge!.copyWith(color: Colors.black),
           )
         ),
+    );
+  }
+  Widget _buildSvgIcon(String assetName, bool isSelected) {
+    return SvgPicture.asset(
+      assetName,
+      colorFilter: ColorFilter.mode(
+        isSelected ? _selectedColor : _unselectedColor,
+        BlendMode.srcIn,
+      ),
+      height: 20,
+      width: 20,
     );
   }
 }

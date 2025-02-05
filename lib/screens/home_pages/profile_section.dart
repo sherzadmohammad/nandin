@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nanden/widgets/profile_tiles.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/user_data.dart';
 import '../../widgets/dialogs/logout_dialog.dart';
