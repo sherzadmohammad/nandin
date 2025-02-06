@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nanden/screens/auth/edit_profile_screen.dart';
 import 'package:nanden/widgets/profile_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/user_data.dart';
@@ -82,7 +83,11 @@ class _ProfileSectionState extends State<ProfileSection> {
                     child:   Column(
                       children: [
                         CustomProfileTiles(icon: Icons.person_outline_outlined, title: AppLocalizations.of(context)!.profile_profile,
-                          onTap: (){},
+                          onTap: (){
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context)=>const EditProfileScreen())
+                            );
+                          },
                         ),
                         divider,
                         CustomProfileTiles(icon: Icons.password_outlined, title: AppLocalizations.of(context)!.profile_changePassword,

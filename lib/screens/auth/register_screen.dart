@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:nanden/widgets/custom_gender_options.dart';
 import '../../themes/input_field_decoration.dart';
 import '../../utils/toast.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -28,12 +29,12 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   late String firstName;
   late String email;
   late String password;
-  String? phone;
+  String phone='';
   String? address;
   String? lastName;
   String? selectedAcademicLevel;
   String? birthdate;
-  String? gender;
+  String gender='';
   bool isSigningUp = false;
   bool _isPasswordVisible=false;
   bool _isConfirmPasswordVisible=false;
@@ -270,75 +271,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8.0,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    gender = 'Female';
-                                  });
-                                },
-                                child: Container(
-                                  width: 150.0,height: 50,
-                                  decoration: BoxDecoration(
-                                    border:gender=='Female'? Border.all(width: 1.1,color: const Color(0xFF262526)) :Border.all(
-                                        width: 1.0,color: const Color(0xFFCBD5E1)
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.female,
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Text(
-                                          'Female',
-                                          style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400)
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16.0),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    gender = 'Male';
-                                  });
-                                },
-                                child: Container(
-                                  width: 150.0,height: 50,
-                                  decoration: BoxDecoration(
-                                    border:gender=='Male'? Border.all(width: 1.1,color: const Color(0xFF262526)) :Border.all(
-                                        width: 1.0,color: const Color(0xFFCBD5E1)
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Center(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.male,
-                                        ),
-                                        const SizedBox(width: 8.0),
-                                        Text(
-                                             AppLocalizations.of(context)!.signup_gender_male,
-                                            style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w400)
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        GenderSelectionWidget(
+                          selectedGender: gender,
+                          onGenderChanged: (value) {
+                            setState(() {
+                              gender=value;
+                            });
+                          },
+                          
                         ),
                       ],
                     ),
@@ -441,7 +381,9 @@ Future<void> _register(WidgetRef ref) async {
   }
   _formKey.currentState!.save();
   userName = '$firstName $lastName';
-
+  if (phone.startsWith('0')) {
+    phone = phone.substring(1);
+  }
   // Show loading state
   setState(() {
     isSigningUp = true;
@@ -452,9 +394,10 @@ Future<void> _register(WidgetRef ref) async {
     final response = await supabaseClient.auth.signUp(
       email: email,
       password: password,
-      //phone: phone,
       data: {
         'name': userName,
+        'gender': gender,
+        'mobile': phone,
         'academic_level': selectedAcademicLevel,
         'address': address,
         'birthdate': birthdate,
@@ -462,7 +405,7 @@ Future<void> _register(WidgetRef ref) async {
       },
     );
 
-    if (response.session == null && response.user != null) {
+    if (response.user != null) {
       // Successfully signed up, prompt user to log in
       if (mounted) {
         showToast(context: context, message: "Successfully signed up. Please log in.");
