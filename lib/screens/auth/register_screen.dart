@@ -3,7 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:nanden/widgets/custom_gender_options.dart';
+import 'package:nanden/widgets/custom_form_fields.dart';
+import 'package:nanden/widgets/gender_selection_widget.dart';
 import '../../themes/input_field_decoration.dart';
 import '../../utils/toast.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -47,6 +48,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _birthdateController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
   Widget customHeight = const SizedBox(height: 16.0,);
@@ -131,24 +135,14 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           },
                         ),
                         customHeight,
-                        TextFormField(
+                        customPhoneField(
                           controller: _phoneController,
-                          style: InputFieldStyle().inputTextStyle,
-                          keyboardType: TextInputType.phone,
-                          decoration:  InputFieldStyle().decoration(hint: 'Phone number (Optional)'
-                          ),
-                          validator: (value){
-                            if(value!=null&&value.isNotEmpty&&value.length!=10 ){
-                              return 'phone number must be 10 digit.';
-                            }
-                            return null;
-                          },
-                          onSaved: (value){
-                            phone=_phoneController.text;
+                          label: 'phone',
+                          onSaved: (value) {
+                            phone = _phoneController.text.trim();
                           },
                         ),
                         customHeight,
-                        
                         Row(
                           children: [
                             Expanded(
@@ -201,70 +195,62 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                 ),
                               ),
                             ),
-
                           ],
                         ),
                         customHeight,
-                        TextFormField(
+                        customTextField(
                           controller: _addressController,
-                          style: InputFieldStyle().inputTextStyle,
-                          decoration:  InputFieldStyle().decoration(hint: 'Address'
-                          ),
+                          context: context,
+                          hint: 'Address',
                           onSaved: (value){
                             address=_addressController.text;
                           },
                         ),
                         customHeight,
-                        TextFormField(
+                        customPasswordField(
                           controller: _passwordController,
-                            obscureText: !_isPasswordVisible,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,color: Color(0xFF1A1A1A)
-                          ),
-                          decoration:  InputFieldStyle().passwordInputDecoration(
-                            AppLocalizations.of(context)!.signup_password_hint,
-                            isPasswordVisible: _isPasswordVisible,
-                            togglePasswordVisibility: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                          ),
+                          context: context,
+                          isPasswordVisible: _isPasswordVisible,
+                          togglePasswordVisibility:  () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
                           validator: (value){
-                            if(value!.length<8) {
-                              return 'Password must be grater than 8 character.';}
+                            if(value==null||value.length<=8){
+                              return "Password must be grater or equal than 8 char";
+                            }
+                            else if(value !=_passwordController.text){
+                              return "Passwrod is not mutch confirm passwrod";
+                            }
                             return null;
                           },
                           onSaved: (value){
-                            password=_passwordController.text;
-                          },
+                          password=_passwordController.text;
+                        },
                         ),
                         customHeight,
-                        TextFormField(
+                        customPasswordField(
                           controller: _confirmPasswordController,
-                          obscureText: !_isConfirmPasswordVisible,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,color: Color(0xFF1A1A1A)
-                          ),
-                          decoration:  InputFieldStyle().passwordInputDecoration(
-                            AppLocalizations.of(context)!.signup_confirmPassword_hint,
-                            isPasswordVisible: _isConfirmPasswordVisible,
-                            togglePasswordVisibility: () {
-                              setState(() {
-                                _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                              });
-                            },
-                          ),
+                          context: context,
+                          isPasswordVisible: _isConfirmPasswordVisible,
+                          togglePasswordVisibility:  () {
+                            setState(() {
+                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                            });
+                          },
                           validator: (value){
-                            if(value!.length<8) {
-                              return 'Password must be grater than 8 character.';}
+                            if(value==null||value.length<=8){
+                              return "Password must be grater or equal than 8 char";
+                            }
+                            else if(value !=_passwordController.text){
+                              return "Passwrod is not mutch confirm passwrod";
+                            }
                             return null;
                           },
                           onSaved: (value){
-                            password=_passwordController.text;
-                          },
+                          password=_confirmPasswordController.text;
+                        },
                         ),
                         customHeight,
                         Text(AppLocalizations.of(context)!.signup_gender_Female,

@@ -19,10 +19,6 @@ class UserNotifier extends StateNotifier<AsyncValue<UserData>> {
     final rawUserData = user?.userMetadata;
 
     if (rawUserData != null) {
-      // Parse the response into a User object
-      if (kDebugMode) {
-        print("Successfully returned user details from Supabase: ${rawUserData['name']}");
-      }
       final userData = UserData.fromJson(rawUserData);
 
       if (kDebugMode) {

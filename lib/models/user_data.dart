@@ -5,9 +5,9 @@ class UserData {
   final bool hasVerifiedEmail;
   final String gender;
   final String mobile;
-  final String? address;
+  final String address;
   final String academicLevel;
-  final String? birthdate;
+  final String birthdate;
   final String userAvatarPath;
 
   UserData({
@@ -17,9 +17,9 @@ class UserData {
     required this.hasVerifiedEmail,
     required this.gender,
     required this.mobile,
-    this.address,
+    required this.address,
     required this.academicLevel,
-    this.birthdate,
+    required this.birthdate,
     required this.userAvatarPath,
   });
 
@@ -31,10 +31,10 @@ class UserData {
     email: json['email'] ?? '',
     hasVerifiedEmail: json['email_verified'] == true,
     gender: json['gender'] ?? '',
-    mobile: json['phone'] ?? '',
-    address: json['address'] ,
+    mobile: json['mobile'] ?? '',
+    address: json['address'] ?? '' ,
     academicLevel: json['academic_level'] ?? '',
-    birthdate: json['birthdate'] as String?,
+    birthdate: json['birthdate'] ?? '',
     userAvatarPath: json['profile_photo_path'] ?? '',
   );
 }
@@ -46,7 +46,7 @@ class UserData {
       'name': name,
       'email': email,
       'gender': gender,
-      'phone': mobile, // Adjust to match Supabase
+      'mobile': mobile,
       'address': address,
       'academic_level': academicLevel,
       'birthdate': birthdate,

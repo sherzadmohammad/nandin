@@ -30,7 +30,10 @@
     "signup_email_hint": "Enter your email",
     "signup_password_hint": "Password",
     "signup_confirmPassword_hint": "Confirm Password",
-    "signup_city_hint": "Select city",
+    "signup_address_hint": "Address",
+    "signup_phone_hint": "Phone",
+    "signup_birthdate_hint":"birthdate",
+    
     "signup_gender_hint": "Select Gender",
     "signup_gender_male": "Male",
     "signup_gender_Female": "Female",
