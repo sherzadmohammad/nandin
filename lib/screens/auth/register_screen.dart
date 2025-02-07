@@ -217,7 +217,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             });
                           },
                           validator: (value){
-                            if(value==null||value.length<=8){
+                            if(value==null||value.length<8){
                               return "Password must be grater or equal than 8 char";
                             }
                             else if(value !=_passwordController.text){
@@ -240,7 +240,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             });
                           },
                           validator: (value){
-                            if(value==null||value.length<=8){
+                            if(value==null||value.length<8){
                               return "Password must be grater or equal than 8 char";
                             }
                             else if(value !=_passwordController.text){

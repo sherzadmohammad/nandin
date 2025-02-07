@@ -97,18 +97,6 @@ class _ProfileSectionState extends State<ProfileSection> {
                     ),
                   ),
                   const SizedBox(height: 24.0,),
-                   Text(AppLocalizations.of(context)!.profile_courses_record,
-                    style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: Color(0xFF6C6C6C)),
-                  ),
-                  const SizedBox(height: 12.0,),
-                  Container(
-                    padding: padding,
-                    decoration: decoration,
-                    child: CustomProfileTiles(icon: Icons.bookmark_outline_outlined, title: AppLocalizations.of(context)!.profile_courses,
-                      onTap: (){},
-                    ),
-                  ),
-                  const SizedBox(height: 24.0,),
                   Container(
                     padding:padding,
                     decoration: decoration,
