@@ -32,7 +32,6 @@ class _ProfileSectionState extends State<ProfileSection> {
   }
   @override
   Widget build(BuildContext context) {
-    print(widget.user.name.toString());
     return Scaffold(
       body: SafeArea(
         child: ScrollConfiguration(

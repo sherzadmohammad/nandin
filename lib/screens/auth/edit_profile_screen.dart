@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nanden/widgets/custom_form_fields.dart';
 import 'package:nanden/widgets/gender_selection_widget.dart';
-import '../../providers/api_service_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/toast.dart';
 import '../../widgets/dialogs/delete_acount_dialog.dart';
@@ -33,10 +33,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late String lastName;
   late String email;
   late String address;
+  late String selectedAcademicLevel;
+  late String birthdate;
   late String mobile;
-  late String selectedCity;
   late String gender;
   bool isSigningUp = false;
+  late String profilePhotoUrl;
   File? _selectedImage;
   void _removeImage() {
     setState(() {
@@ -50,12 +52,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     List<String> nameParts = fullName.split(' ');
      firstName = nameParts.isNotEmpty ? nameParts.first : '';
      lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+     selectedAcademicLevel=initUserData.academicLevel;
+     birthdate=initUserData.birthdate;
+     profilePhotoUrl=initUserData.userAvatarPath;
     _firstnameController.text=firstName;
     _lastnameController.text=lastName;
     _emailController.text = initUserData.email;
     _phoneController.text = initUserData.mobile;
     _addressController.text = initUserData.address;
-    gender = 'Male';
+    gender = initUserData.gender;
     super.initState();
   }
   @override
@@ -68,7 +73,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.dispose();
   }
   Future<void> _showImagePickerBottomSheet(BuildContext context) async {
-    final pickedImage = await showModalBottomSheet<XFile>(
+    final XFile? pickedImage = await showModalBottomSheet<XFile>(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -89,44 +94,125 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
   }
   void _updateProfile() async {
-    if (!_profileFormKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in all fields correctly.")),
-      );
-      return;
+  if (!_profileFormKey.currentState!.validate()) {
+    showToast(context: context, message: "Please fill in all fields correctly.");
+    if(kDebugMode){
+      print('Please fill in all fields correctly.');
     }
-    _profileFormKey.currentState!.save();
-    final apiService= ref.read(apiServiceProvider);
+    return;
+  }
+
+  _profileFormKey.currentState!.save();
+  setState(() {
+    isSigningUp = true;
+  });
+
+  final supabase = Supabase.instance.client;
+  final user = supabase.auth.currentUser;
+  if (user == null) {
     setState(() {
-      isSigningUp = true;
+      isSigningUp = false;
     });
-    final name = '${_firstnameController.text.trim()} ${_lastnameController.text.trim()}';
-    const mob2 = "1234567890";
-    const address = "None";
-    try {
-      final response = await apiService.updateProfile(name, email, mobile, mob2, address, selectedCity);
-      setState(() {
-        isSigningUp = false;
-      });
-      if (response['success']) {
-        ref.read(userProvider.notifier).fetchUserDetails();
-        if(mounted){
-        showToast(context: context, message: response['message']);
-        }
+    showToast(context: context, message: "User not authenticated.");
+    if(kDebugMode){
+          print('User not authenticated.');
+    }
+    return;
+  }
+
+  final name = '${_firstnameController.text.trim()} ${_lastnameController.text.trim()}';
+  String profilePhotoUrl = "";
+
+  try {
+  // Fetch the existing profile photo URL from the user profile
+  final currentUser = supabase.auth.currentUser;
+  String? existingProfilePhoto = currentUser?.userMetadata?['profile_photo_path'];
+
+  if (_selectedImage != null) {
+    final String storagePath = 'profile_pictures/${user.id}.jpg';
+
+    // Convert image to bytes
+    final Uint8List imageBytes = await _selectedImage!.readAsBytes();
+
+    // Check if the user already has a profile image and if it's the same file
+    if (existingProfilePhoto != null && existingProfilePhoto.isNotEmpty) {
+      String currentUploadedUrl = supabase.storage.from('profile_pictures').getPublicUrl(storagePath);
+
+      // If the user is re-uploading the same image, skip upload
+      if (existingProfilePhoto == currentUploadedUrl) {
+        if (kDebugMode) print("User already has this profile image. Skipping upload.");
       } else {
-        if(mounted){
-        showToast(context: context, message: response['message']);
-        }
+        // Upload new image
+        await supabase.storage.from('profile_pictures').uploadBinary(
+          storagePath,
+          imageBytes,
+          fileOptions: const FileOptions(upsert: true), // Overwrite existing file
+        );
+
+        // Get new image URL
+        profilePhotoUrl = supabase.storage.from('profile_pictures').getPublicUrl(storagePath);
+        if (kDebugMode) print('New image uploaded: $profilePhotoUrl');
       }
-    } catch (e) {
-      setState(() {
-        isSigningUp = false;
-      });
-      if(mounted){
-      showToast(context: context, message: 'An error occurred');
-      }
+    } else {
+      // User doesn't have an existing image, so we upload
+      await supabase.storage.from('profile_pictures').uploadBinary(
+        storagePath,
+        imageBytes,
+        fileOptions: const FileOptions(upsert: true),
+      );
+
+      profilePhotoUrl = supabase.storage.from('profile_pictures').getPublicUrl(storagePath);
+      if (kDebugMode) print('Image uploaded: $profilePhotoUrl');
+    }
+  } else if (profilePhotoUrl.isEmpty) {
+    profilePhotoUrl = ''; // Clear profile photo if the user removed it
+  }
+
+  // ✏️ Update user profile in Supabase
+  final response = await supabase.auth.updateUser(
+    UserAttributes(
+      data: {
+        'name': name,
+        'gender': gender,
+        'mobile': mobile,
+        'academic_level': selectedAcademicLevel,
+        'address': address,
+        'birthdate': birthdate,
+        'profile_photo_path': profilePhotoUrl,
+      },
+    ),
+  );
+
+  setState(() {
+    isSigningUp = false;
+  });
+
+  if (response.user != null) {
+    ref.read(userProvider.notifier).fetchUserDetails();
+    if (mounted) {
+      showToast(context: context, message: "Profile updated successfully");
+      if (kDebugMode) print('Profile updated successfully');
+    }
+    if (mounted) Navigator.of(context).pop();
+  } else {
+    if (mounted) {
+      showToast(context: context, message: "Profile update failed.");
+      if (kDebugMode) print('Profile update failed.');
     }
   }
+}  catch (e) {
+    setState(() {
+      isSigningUp = false;
+    });
+    if (mounted) {
+      showToast(context: context, message: 'An error occurred: $e');
+      if(kDebugMode){
+          print('An error occurred: $e');
+        }
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
