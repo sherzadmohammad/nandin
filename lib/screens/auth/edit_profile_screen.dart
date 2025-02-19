@@ -269,6 +269,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             Center(
               child: Stack(
                 children: [
+                  _selectedImage !=null?
+                  ProfileImageWidget(
+                    file: _selectedImage,
+                    size: 160,
+                    borderRadius: 80.0,
+                  ):
                   ProfileImageWidget(
                     imageUrl: profilePhotoUrl,
                     size: 160,

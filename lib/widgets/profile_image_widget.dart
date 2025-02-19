@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileImageWidget extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
+  final File? file;
   final double size;
   final double borderRadius;
 
   const ProfileImageWidget({
     super.key,
-    required this.imageUrl,
+    this.imageUrl,
+    this.file,
     this.size = 65.0, // Default size
     this.borderRadius = 30.0, // Default border radius
   });
@@ -20,8 +24,9 @@ class ProfileImageWidget extends StatelessWidget {
       height: size,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius), // Makes it circular
-        child: Image.network(
-          imageUrl,
+
+        child:imageUrl != null? Image.network(
+          imageUrl!,
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
@@ -40,6 +45,14 @@ class ProfileImageWidget extends StatelessWidget {
               ),
             );
           },
+          errorBuilder: (context, error, stackTrace) => Image.asset(
+            'assets/blank-profile-picture.png',
+            fit: BoxFit.cover,
+          ),
+        )
+        :Image.file(
+          file!,
+          fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => Image.asset(
             'assets/blank-profile-picture.png',
             fit: BoxFit.cover,
