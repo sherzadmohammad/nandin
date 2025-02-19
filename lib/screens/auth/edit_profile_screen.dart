@@ -41,12 +41,33 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   bool isSigningUp = false;
   late String profilePhotoUrl;
   File? _selectedImage;
-  void _removeImage(){
+  void _removeImage() async {
+  final supabase = Supabase.instance.client;
+  final user = supabase.auth.currentUser;
+  if (user == null || profilePhotoUrl.isEmpty) return;
+
+  try {
+    //  Extract the correct file path from the URL
+    final fileName = '${user.id}.${profilePhotoUrl.split('.').last}';
+    final filePath = 'profile_pictures/$fileName';
+
+    // Delete the image from Supabase storage
+    await supabase.storage.from('profile_pictures').remove([filePath]);
+
+    // Update state
     setState(() {
-      profilePhotoUrl="";
+      profilePhotoUrl = "";
       _selectedImage = null;
     });
+
+    if (kDebugMode) print("Profile image removed successfully.");
+    if (mounted) showToast(context: context, message: "Profile image removed.");
+  } catch (e) {
+    if (kDebugMode) print("Failed to remove profile image: $e");
+    if (mounted) showToast(context: context, message: "Failed to remove image.");
   }
+}
+
   @override
   void initState() {
     final initUserData=ref.read(userProvider.notifier).currentUser;
@@ -82,7 +103,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
-        return ShowBottomSheetDialog(onRemoveImage:(){ _removeImage("");});
+        return ShowBottomSheetDialog(onRemoveImage:(){ _removeImage();});
       },
     );
 
