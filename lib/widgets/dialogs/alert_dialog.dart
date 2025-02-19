@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-//import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ShowBottomSheetDialog extends StatelessWidget {
   const ShowBottomSheetDialog({super.key, required this.onRemoveImage});
@@ -35,7 +35,7 @@ class ShowBottomSheetDialog extends StatelessWidget {
             onPressed: () async {
               await _pickImageFromGallery(context);
             },
-            label: Text('',//AppLocalizations.of(context)!.bottomSheet_library
+            label: Text(AppLocalizations.of(context)!.bottomSheet_library
             ),
           ),
           const SizedBox(height: 10),
@@ -47,7 +47,7 @@ class ShowBottomSheetDialog extends StatelessWidget {
             onPressed: () async {
               await _pickImageFromCamera(context);
             },
-            label:  Text('',//AppLocalizations.of(context)!.bottomSheet_camera
+            label:  Text(AppLocalizations.of(context)!.bottomSheet_camera
             ),
           ),
           const SizedBox(height: 10),
@@ -58,10 +58,9 @@ class ShowBottomSheetDialog extends StatelessWidget {
             icon: const Icon(Icons.delete_outline),
             onPressed: () async {
               onRemoveImage();
-              Navigator.of(context).pop('',//AppLocalizations.of(context)!.editProfile_delete_btn
-              );
+              Navigator.of(context).pop();
             },
-            label: Text('',//AppLocalizations.of(context)!.bottomSheet_removePhoto
+            label: Text(AppLocalizations.of(context)!.bottomSheet_removePhoto
             ),
           ),
         ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nanden/screens/auth/edit_profile_screen.dart';
+import 'package:nanden/widgets/profile_image_widget.dart';
 import 'package:nanden/widgets/profile_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../models/user_data.dart';
 import '../../widgets/dialogs/logout_dialog.dart';
 class ProfileSection extends StatefulWidget {
@@ -50,10 +52,7 @@ class _ProfileSectionState extends State<ProfileSection> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const CircleAvatar(
-                        backgroundImage: NetworkImage('https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
-                        radius: 35.0,
-                      ),
+                      ProfileImageWidget(imageUrl: widget.user.userAvatarPath),
                       const SizedBox(width: 8.0,),
                         Column(
                         mainAxisSize: MainAxisSize.min,
