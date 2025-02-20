@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'comment_data.dart';
 enum Complexity{
@@ -42,115 +44,88 @@ class Meal{
   var color=Colors.white;
 }
 
-class NewMeal {
-  NewMeal({
+class Post {
+  final String id;
+  final String title;
+  final String imageUrl;
+  final String? videoUrl;
+  final List<String> ingredients;
+  final List<String> steps;
+  final int duration;
+  final String complexity;
+  final String affordability;
+  final String userId;
+  final int likeCount;
+  final int commentCount;
+  final List<String> savedBy;
+  final List<String> tags;
+  final String cuisine;
+  final DateTime timestamp;
+  final bool isPublic;
+
+  Post({
     required this.id,
-    required this.categories,
     required this.title,
     required this.imageUrl,
+    this.videoUrl,
     required this.ingredients,
     required this.steps,
     required this.duration,
     required this.complexity,
     required this.affordability,
-    required this.isGlutenFree,
-    required this.isLactoseFree,
-    required this.isVegan,
-    required this.isVegetarian,
     required this.userId,
-    required this.username,
-    this.likes = const [],
-    this.comments = const [],
-    this.tags = const [],
-    this.cuisine = '',
+    required this.likeCount,
+    required this.commentCount,
+    required this.savedBy,
+    required this.tags,
+    required this.cuisine,
     required this.timestamp,
+    required this.isPublic,
   });
 
-  final String id;
-  final List<String> categories;
-  final String title;
-  final String imageUrl;
-  final List<String> ingredients;
-  final List<String> steps;
-  final int duration;
-  final Complexity complexity;
-  final Affordability affordability;
-  final bool isGlutenFree;
-  final bool isLactoseFree;
-  final bool isVegan;
-  final bool isVegetarian;
-
-  // New fields for user accounts and social interactions
-  final String userId; // ID of the user who created the meal
-  final String username; // Name of the user who created the meal
-  final List<String> likes; // List of user IDs who liked the meal
-  final List<Comment> comments; // List of comments on the meal
-
-  // New fields for search filters
-  final List<String> tags; // Tags for filtering (e.g., ["quick-meal", "vegetarian"]),
-  final String cuisine; // Type of cuisine (e.g., "Italian", "Mexican"),
-
-  // Timestamp for when the meal was posted,
-  final DateTime timestamp;
-
-  // Optional: Add a color property for UI customization
-  var color = Colors.white;
-
-  // Convert a Meal object to a Map (for Firebase/Supabase)
-  Map<String, dynamic> toMap() {
+  /// Convert Post object to JSON (for Supabase)
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'categories': categories,
       'title': title,
-      'imageUrl': imageUrl,
-      'ingredients': ingredients,
-      'steps': steps,
+      'image_url': imageUrl,
+      'video_url': videoUrl,
+      'ingredients': jsonEncode(ingredients), // Convert list to JSON string
+      'steps': jsonEncode(steps),
       'duration': duration,
-      'complexity': complexity.toString(),
-      'affordability': affordability.toString(),
-      'isGlutenFree': isGlutenFree,
-      'isLactoseFree': isLactoseFree,
-      'isVegan': isVegan,
-      'isVegetarian': isVegetarian,
-      'userId': userId,
-      'username': username,
-      'likes': likes,
-      'comments': comments.map((comment) => comment.toMap()).toList(),
-      'tags': tags,
+      'complexity': complexity,
+      'affordability': affordability,
+      'user_id': userId,
+      'like_count': likeCount,
+      'comment_count': commentCount,
+      'saved_by': jsonEncode(savedBy), // Convert list to JSON string
+      'tags': jsonEncode(tags),
       'cuisine': cuisine,
       'timestamp': timestamp.toIso8601String(),
+      'is_public': isPublic,
     };
   }
 
-  // Create a Meal object from a Map (from Firebase/Supabase)
-  factory NewMeal.fromMap(Map<String, dynamic> map) {
-    return NewMeal(
-      id: map['id'],
-      categories: List<String>.from(map['categories']),
-      title: map['title'],
-      imageUrl: map['imageUrl'],
-      ingredients: List<String>.from(map['ingredients']),
-      steps: List<String>.from(map['steps']),
-      duration: map['duration'],
-      complexity: Complexity.values.firstWhere(
-            (e) => e.toString() == map['complexity'],
-      ),
-      affordability: Affordability.values.firstWhere(
-            (e) => e.toString() == map['affordability'],
-      ),
-      isGlutenFree: map['isGlutenFree'],
-      isLactoseFree: map['isLactoseFree'],
-      isVegan: map['isVegan'],
-      isVegetarian: map['isVegetarian'],
-      userId: map['userId'],
-      username: map['username'],
-      likes: List<String>.from(map['likes']),
-      comments: List<Comment>.from(
-        map['comments'].map((comment) => Comment.fromMap(comment)),
-      ),
-      tags: List<String>.from(map['tags']),
-      cuisine: map['cuisine'],
-      timestamp: DateTime.parse(map['timestamp']),
+  /// Convert JSON (from Supabase) to Post object
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      id: json['id'],
+      title: json['title'],
+      imageUrl: json['image_url'],
+      videoUrl: json['video_url'],
+      ingredients: List<String>.from(jsonDecode(json['ingredients'])),
+      steps: List<String>.from(jsonDecode(json['steps'])),
+      duration: json['duration'],
+      complexity: json['complexity'],
+      affordability: json['affordability'],
+      userId: json['user_id'],
+      likeCount: json['like_count'],
+      commentCount: json['comment_count'],
+      savedBy: List<String>.from(jsonDecode(json['saved_by'])),
+      tags: List<String>.from(jsonDecode(json['tags'])),
+      cuisine: json['cuisine'],
+      timestamp: DateTime.parse(json['timestamp']),
+      isPublic: json['is_public'],
     );
   }
 }

@@ -30,7 +30,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   late String firstName;
   late String email;
   late String password;
-  String phone='';
+  String mobile='';
   String? address;
   String? lastName;
   String? selectedAcademicLevel;
@@ -139,7 +139,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                           controller: _phoneController,
                           label: 'phone',
                           onSaved: (value) {
-                            phone = _phoneController.text.trim();
+                            mobile = _phoneController.text.trim();
                           },
                         ),
                         customHeight,
@@ -367,8 +367,8 @@ Future<void> _register(WidgetRef ref) async {
   }
   _formKey.currentState!.save();
   userName = '$firstName $lastName';
-  if (phone.startsWith('0')) {
-    phone = phone.substring(1);
+  if (mobile.startsWith('0')) {
+    mobile = mobile.substring(1);
   }
   // Show loading state
   setState(() {
@@ -380,35 +380,42 @@ Future<void> _register(WidgetRef ref) async {
     final response = await supabaseClient.auth.signUp(
       email: email,
       password: password,
-      data: {
-        'name': userName,
-        'gender': gender,
-        'mobile': phone,
-        'academic_level': selectedAcademicLevel,
-        'address': address,
-        'birthdate': birthdate,
-        'profile_photo_path': '', // Placeholder if no image is provided
-      },
     );
-
-    if (response.user != null) {
+    if (response.user == null) {
       // Successfully signed up, prompt user to log in
-      if (mounted) {
-        showToast(context: context, message: "Successfully signed up. Please log in.");
-        if(kDebugMode){
-          print("Successfully signed up. Please log in.");
-        }
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-      }
-    } else {
       // Sign-up failed
       if (mounted) {
         showToast(context: context, message: "Failed to register user. Please try again.");
         if(kDebugMode){
-          print("Failed to register user. Please try again.");
+          print("Failed to register user. user is null.");
         }
       }
+      return;
     }
+    if(kDebugMode){
+        print("Successfully signed up. trying to insert user row.");
+    }
+    final res = await supabaseClient.from('users').insert({
+      'id': response.user!.id,
+      'name': userName,
+      'email': email,
+      'has_verified_email': false,// response.user.emailConfirmedAt != null,
+      'gender': gender,
+      'mobile': mobile,
+      'address': address,
+      'academic_level': selectedAcademicLevel,
+      'birthdate': birthdate,
+      'user_avatar_path': "",
+    });
+    
+    if (mounted) {
+      showToast(context: context, message: "Successfully signed up. Please log in.");
+      if(kDebugMode){
+        print("Successfully signed up. Please log in.");
+      }
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+    
   } catch (e) {
     // Handle any errors
     if (mounted) {
