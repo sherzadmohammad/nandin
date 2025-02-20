@@ -10,36 +10,37 @@ class UserNotifier extends StateNotifier<AsyncValue<UserData>> {
 
   /// Fetches user details from Supabase and updates the state.
   Future<void> fetchUserDetails() async {
-  try {
-    // Fetch the current authenticated user
-    final userResponse = await _supabaseClient.auth.getUser();
+    try {
+      // Get the currently authenticated user
+      final user = _supabaseClient.auth.currentUser;
+      if (user == null) {
+        state = const AsyncValue.error("No authenticated user found", StackTrace.empty);
+        return;
+      }
 
-    // Access the user object and its metadata
-    final user = userResponse.user;
-    final rawUserData = user?.userMetadata;
+      // Fetch user details from the `users` table using the user's ID
+      final response = await _supabaseClient
+          .from('users')
+          .select()
+          .eq('id', user.id)
+          .single();
 
-    if (rawUserData != null) {
-      final userData = UserData.fromJson(rawUserData);
+      // Convert the response into a UserData object
+      final userData = UserData.fromJson(response);
 
       if (kDebugMode) {
-        print("Successfully fetched user details from Supabase: ${userData.name}");
+        print("Successfully fetched user details from `users` table: ${userData.name}");
       }
 
       // Update the state with the fetched user
       state = AsyncValue.data(userData);
-    } else {
+    } catch (e, stackTrace) {
       if (kDebugMode) {
-        print("No user metadata available in user-provider file.");
+        print("Error fetching user details from `users` table: $e");
       }
-      state = const AsyncValue.error("User metadata not found",StackTrace.empty);
+      state = AsyncValue.error(e, stackTrace);
     }
-  } catch (e, stackTrace) {
-    if (kDebugMode) {
-      print("Error fetching user details from Supabase: $e");
-    }
-    state = AsyncValue.error(e, stackTrace);
   }
-}
 
 
   /// Clears the current user data, typically used during logout.
