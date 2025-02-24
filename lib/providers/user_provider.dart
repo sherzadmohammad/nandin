@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nanden/providers/supabase_instance_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_data.dart';
 
@@ -56,6 +57,6 @@ class UserNotifier extends StateNotifier<AsyncValue<UserData>> {
 }
 
 final userProvider = StateNotifierProvider<UserNotifier, AsyncValue<UserData>>((ref) {
-  final supabaseClient = Supabase.instance.client;
+  final supabaseClient = ref.read(supabaseProvider);
   return UserNotifier(supabaseClient);
 });

@@ -395,7 +395,7 @@ Future<void> _register(WidgetRef ref) async {
     if(kDebugMode){
         print("Successfully signed up. trying to insert user row.");
     }
-    final res = await supabaseClient.from('users').insert({
+     await supabaseClient.from('users').insert({
       'id': response.user!.id,
       'name': userName,
       'email': email,

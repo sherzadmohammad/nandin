@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/api_service_provider.dart';
 class UpdatePasswordDialog extends ConsumerWidget {
   const UpdatePasswordDialog({super.key,});
   @override
@@ -26,8 +25,6 @@ class UpdatePasswordDialog extends ConsumerWidget {
             height: 50.0,
             child: ElevatedButton(
                 onPressed: (){
-                  final apiService=ref.read(apiServiceProvider);
-                  apiService.logout();
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/login',

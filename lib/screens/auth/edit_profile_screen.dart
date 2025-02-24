@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nanden/providers/supabase_instance_provider.dart';
 import 'package:nanden/widgets/custom_form_fields.dart';
 import 'package:nanden/widgets/gender_selection_widget.dart';
 import 'package:nanden/widgets/profile_image_widget.dart';
@@ -84,6 +85,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _phoneController.text = initUserData.mobile;
     _addressController.text = initUserData.address;
     gender = initUserData.gender;
+    print('the profilePhotoUrl is: $profilePhotoUrl');
     super.initState();
   }
   @override
@@ -123,20 +125,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<String?> _uploadProfilePhoto(File image) async {
   try {
-    final supabase = Supabase.instance.client;
+    final supabase = ref.read(supabaseProvider);
     final user = supabase.auth.currentUser;
-    if (user == null) return null;
+    
 
-    final fileExt = image.path.split('.').last;
-    final fileName = '${user.id}.$fileExt';
-    final filePath = 'profile_pictures/$fileName';
+    final String fileExt = image.path.split('.').last;
+    final String fileName = '${user!.id}.$fileExt';
+    final String filePath = 'profile_pictures/$fileName';
 
+  await supabase.storage.from('profile_pictures').remove([filePath]); 
     final response = await supabase.storage
         .from('profile_pictures')
         .upload(
           filePath,
           image,
-          fileOptions: const FileOptions(upsert: true),
+          fileOptions: FileOptions(upsert: true)
         );
 
     if (response.isEmpty){
@@ -147,8 +150,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       showToast(context: context, message: "failed to upload image." );
       }
     }
-    
-    return supabase.storage.from('profile_pictures').getPublicUrl(filePath);
+    final newPath = supabase.storage.from('profile_pictures').getPublicUrl(filePath);
+    print("the new path is:$newPath");
+    return newPath;
   } catch (e) {
     if (kDebugMode) print('Image upload failed: $e');
     return null;
@@ -169,7 +173,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     isSigningUp = true;
   });
 
-  final supabase = Supabase.instance.client;
+  final supabase = ref.read(supabaseProvider);
   final user = supabase.auth.currentUser;
   if (user == null) {
     setState(() {
@@ -184,6 +188,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   if (_selectedImage != null) {
     final uploadedUrl = await _uploadProfilePhoto(_selectedImage!);
+    print("the returned Profile photo url:$uploadedUrl");
+    if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
+      profilePhotoUrl = uploadedUrl;
+    } else {
+      if (mounted) showToast(context: context, message: "Failed to upload image.");
+    }
+
     if (uploadedUrl != null) {
       profilePhotoUrl = uploadedUrl;
     } else {
@@ -194,31 +205,26 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   try {
+    print("uploading this profilePhotoUrl : $profilePhotoUrl");
+    // ✏️ Update user profile in Supabase  
+    final response = await supabase
+    .from('users')
+    .update({
+      'name': name,
+      'gender': gender,
+      'mobile': mobile,
+      'academic_level': selectedAcademicLevel,
+      'address': address,
+      'birthdate': birthdate,
+      'user_avatar_path': profilePhotoUrl, // Update avatar path
+    })
+    .eq('id', user.id).select();
 
-    // ✏️ Update user profile in Supabase
-    final response = await supabase.auth.updateUser(
-      UserAttributes(
-        data: {
-          'name': name,
-          'gender': gender,
-          'mobile': mobile,
-          'academic_level': selectedAcademicLevel,
-          'address': address,
-          'birthdate': birthdate,
-          'profile_photo_path': profilePhotoUrl,
-        },
-      ),
-    );
-
-    setState(() {
-      isSigningUp = false;
-    });
-
-    if (response.user != null) {
+    if (response.isNotEmpty) {
       ref.read(userProvider.notifier).fetchUserDetails();
       if (mounted) {
-        showToast(context: context, message: "Profile updated successfully");
-        if (kDebugMode) print('Profile updated successfully');
+        showToast(context: context, message: "Profile updated successfully:$profilePhotoUrl");
+        if (kDebugMode) print('Profile updated successfully:$profilePhotoUrl');
       }
       if (mounted) Navigator.of(context).pop();
     } else {
@@ -235,6 +241,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       showToast(context: context, message: 'An error occurred: $e');
       if (kDebugMode) print('An error occurred: $e');
     }
+  }finally{
+    setState(() {
+      isSigningUp = false;
+    });
   }
 }
 

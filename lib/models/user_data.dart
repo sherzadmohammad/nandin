@@ -35,7 +35,7 @@ class UserData {
     address: json['address'] ?? '' ,
     academicLevel: json['academic_level'] ?? '',
     birthdate: json['birthdate'] ?? '',
-    userAvatarPath: json['profile_photo_path'] ?? '',
+    userAvatarPath: json['user_avatar_path'] ?? '',
   );
 }
 
