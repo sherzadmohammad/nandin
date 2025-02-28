@@ -3,7 +3,6 @@ import 'package:nanden/screens/auth/edit_profile_screen.dart';
 import 'package:nanden/widgets/profile_image_widget.dart';
 import 'package:nanden/widgets/profile_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../models/user_data.dart';
 import '../../widgets/dialogs/logout_dialog.dart';
 class ProfileSection extends StatefulWidget {

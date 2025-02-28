@@ -438,12 +438,13 @@ Future<void> _selectBirthdate(BuildContext context) async {
     firstDate: DateTime(1900),
     lastDate: DateTime.now(),
   );
-
-  if (pickedDate != null && mounted) {
+  if(pickedDate != null){
+  if (mounted) {
     setState(() {
       birthdate = DateFormat('yyyy-MM-dd').format(pickedDate);
       _birthdateController.text=birthdate.toString();
     });
+  }
   }
 }
 

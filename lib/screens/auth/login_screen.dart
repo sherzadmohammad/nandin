@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/providers/user_provider.dart';
-import 'package:nanden/services/api_services.dart';
 import 'package:nanden/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:nanden/screens/auth/register_screen.dart';
@@ -20,7 +19,6 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginScreen> {
   bool _isSigning = false;
-  final ApiService apiService = ApiService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;

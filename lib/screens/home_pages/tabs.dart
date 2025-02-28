@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/constants/loading_data.dart';
+import 'package:nanden/screens/home_pages/posts_screen.dart';
 import 'package:nanden/screens/home_pages/profile_section.dart';
 import '../../providers/favorite_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,6 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   Widget build(BuildContext context) {
     final filteredMeals = ref.watch(filteredMealsProvider);
     Widget activeScreen = MainBodyScreen(availableMeals: filteredMeals);
-    String activeScreenTitle = 'Category';
 
     final favoriteMeal = ref.watch(favoriteMealsProvider);
     final userAsyncValue = ref.watch(userProvider);
@@ -39,14 +39,15 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
         if (_currentScreen == 0) {
           activeScreen = MainBodyScreen(availableMeals: filteredMeals);
           
-          activeScreenTitle = 'Favorite';
         } else if(_currentScreen == 1){
           activeScreen = MealsScreen(
             title: "Favorite",
             meals: favoriteMeal,
           );
-          activeScreenTitle = 'Category';
-        }else{
+        }else if(_currentScreen ==2){
+          activeScreen=MealPostsScreen();
+        }
+        else{
           activeScreen = ProfileSection(user: user);
         }
         return Scaffold(
@@ -83,10 +84,17 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
                     ),
                   ),
                   BottomNavigationBarItem(
+                    label: "screens",
+                    icon: Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _buildSvgIcon('assets/icons/morning.svg', _currentScreen==2)
+                    ),
+                  ),
+                  BottomNavigationBarItem(
                     label: AppLocalizations.of(context)!.bottomNavigationItems_profile,
                     icon: Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
-                        child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==2)
+                        child:_buildSvgIcon('assets/icons/bottom_profile.svg', _currentScreen==3)
                     ),
                   ),
                 ]

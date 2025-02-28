@@ -1,300 +1,198 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-class ApiService {
-  late final Dio dio;
-  ApiService() {
-    dio = Dio(
-      BaseOptions(
-        baseUrl: 'https://springgreen-porcupine-757961.hostingersite.com/api/',
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ),
-    );
-  }
-  Future<Map<String, dynamic>> updateProfile(String name, String email, String mob1, String mob2, String address, String city) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-    if (token == null) {
-      return {
-        'success': false,
-        'message': 'Could not find token, please login again to fix the issue.',
-      };
-    }
+import 'package:nanden/models/meal_data.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+class PostService {
+  final SupabaseClient _supabase;
+  PostService() : _supabase = Supabase.instance.client;
+  // Create a new post with tags
+  Future<Post> createPost(Post post, List<String> tagNames) async {
+    // Start a transaction
     try {
-      final response = await dio.post(
-        'update-profile',
-        data: {
-          "name": name,
-          "email": email,
-          "mobile1": mob1,
-          "mobile2": mob2,
-          "address": address,
-          "city": city,
-        },
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
-      );
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        return {
-          'success': true,
-          'message': 'Profile updated successfully.',
-        };
-      } else {
-        return {
-          'success': false,
-          'message': response.data['message'] ?? 'Failed to update profile.',
-        };
-      }
-    } on DioException catch (e) {
-      return {
-        'success': false,
-        'message': e.response?.data['message'] as String? ?? 'An error occurred',
-      };
-    }
-  }
-  Future<Map<String, dynamic>> updatePassword(String currentPassword, String newPassword) async {
-    print('the currentPassword is : $currentPassword  and  the newPassword is : $newPassword');
-    final prefs=await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-    if (token == null){
-      return {
-        'success': false,
-        'message':  'could not find token please login again to fix the issue.',
-      };
-    }
-    try {
-      final response = await dio.post(
-        'update-password',
-        data: {
-          "currentPassword": currentPassword,
-          "newPassword": newPassword,
-        },
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
-      );
-      print('the response data in the api services file is : ${response.data}');
-      return response.data;
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print('an error occurred in api service file${e.error}');
-      }
-      return {
-        'success': false,
-        'message': e.response?.data['error'] ?? 'An error occurred',
-      };
-    }
-  }
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    try {
-      final response = await dio.post('login', data: {
-        'email': email,
-        'password': password,
-      });
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        final token = response.data['token'] as String;
-        final role = response.data['role'] as String;
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('authToken', token);
-        await prefs.setString('email', email);
-        await prefs.setString('password', password);
-        await prefs.setString('role', role);
-        return {
-          'success': true,
-          'token': token,
-          'role': role,
-        };
-      }
-      return {'success': false}; // Login failed
-    } catch (e) {
-      if (kDebugMode) {
-        print("Login error: $e");
-      }
-      return {'success': false};
-    }
-  }
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.remove('authToken');
-    await prefs.remove('email');
-    await prefs.remove('password');
-    await prefs.remove('role');
-  }
-  Future<Map<String, dynamic>> register(String name, String email, String password, String role) async {
-    try {
-      final response = await dio.post('register', data: {
-        'name': name,
-        'email': email,
-        'password': password,
-        'role': role,
-      });
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('email', email);
-        await prefs.setString('password', password);
-
-        return {'success': true, 'message': 'Registration successful!'};
-      }
-
-      return {'success': false, 'message': 'Registration failed'};
-    } catch (e) {
-      if (kDebugMode) {
-        print("Registration error: $e");
-      }
-      return {'success': false, 'message': 'An error occurred'};
-    }
-  }
-  Future<Map<String, dynamic>?> getUserDetails() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-    if (token == null){
-    return null;
-    }
-
-    try {
-      final response = await dio.get(
-        'user-details',
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-        ),
-      );
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        if (kDebugMode) {
-          print("this is the user data after login in api service: ${response.data}");
+      // 1. Insert the post
+      final postResponse = await _supabase.from('posts').insert(post.toJson()).select().single();
+      if(postResponse.isEmpty){
+        if(kDebugMode){
+          print("Failed to select the inserted post");
         }
-        return response.data['user'] as Map<String, dynamic>;
       }
+      final createdPost = Post.fromJson(postResponse);
+      if (createdPost.id == null) {
+        throw Exception("Error: Created post ID is null!");
+      }
+      // 2. Process tags
+      await _handleTags(createdPost.id!, tagNames);
 
-      return null;
+      // 3. Fetch the complete post with tags
+      return await getPostById(createdPost.id!);
     } catch (e) {
-      if (kDebugMode) {
-        print("Error fetching user details: $e");
-      }
-      return null;
+      throw Exception('Failed to create post: $e');
     }
   }
-  Future<Map<String, dynamic>?> getCourseById(int courseId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-
-    if (token == null) return null;
-
+  // Get post by ID with its tags
+  Future<Post> getPostById(String postId) async {
     try {
-      final response = await dio.get(
-        'course/$courseId',
-      );
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        return response.data['course'] as Map<String, dynamic>;
-      }
-      return null;
+      // 1. Get the post
+      final response = await _supabase
+          .from('posts')
+          .select()
+          .eq('id', postId)
+          .single();
+      // 2. Get the tags for this post
+      final tags = await _getTagsForPost(postId);
+      // 3. Create the post with tags
+      final post = Post.fromJson(response);
+      return post.copyWith(tags: tags);
     } catch (e) {
-      if (kDebugMode) {
-        print("Error fetching course details: $e");
-      }
-      return null;
+      throw Exception('Failed to get post: $e');
     }
   }
-  Future<List<Map<String, dynamic>>> getCourses() async {
+  // Get all posts with their tags
+  Future<List<Post>> getAllPosts({int limit = 10, int offset = 0}) async {
     try {
-      final response = await dio.get('get-courses');
+      // 1. Get posts
+      final response = await _supabase
+          .from('posts')
+          .select()
+          .eq('is_public', true)
+          .order('timestamp', ascending: false)
+          .range(offset, offset + limit - 1);
 
-      if (response.statusCode == 200) {
-        final List courses = response.data['courses'];
-        return courses.map((course) => course as Map<String, dynamic>).toList();
+      // 2. Create post objects
+      final posts = response.map((json) => Post.fromJson(json)).toList();
+      // 3. Get tags for each post
+      for (var i = 0; i < posts.length; i++) {
+        final tags = await _getTagsForPost(posts[i].id!);
+        posts[i] = posts[i].copyWith(tags: tags);
       }
-      return [];
+      return posts;
     } catch (e) {
-      if (kDebugMode) {
-        print("Error fetching courses in api services : $e");
-      }
-      return [];
+      throw Exception('Failed to get posts: $e');
     }
   }
-  Future<List<Map<String,dynamic>>> getTutors()async{
-    try{
-      final response=await dio.get("tutors");
-      if(response.statusCode==200){
-        return response.data as List<Map<String,dynamic>>;
-      }
-    }catch(e){
-      if (kDebugMode) {
-        print("Error fetching tutors in api service file:$e");
-        return [];
-      }
-    }
-      return [];
-  }
-  Future<Map<String, dynamic>?> getTutorDetailsById(int userId) async {
+  // Update post with tags
+  Future<Post> updatePost(Post post, List<String> tagNames) async {
     try {
-      final response = await dio.get('tutor/$userId');
-      if (response.statusCode == 200) {
-        return response.data as Map<String, dynamic>;
-      } else {
-        return null;
-      }
+      // 1. Update the post
+      await _supabase
+          .from('posts')
+          .update(post.toJson())
+          .eq('id', post.id!);
+      // 2. Handle tags (this will delete existing tags and add new ones)
+      await _handleTags(post.id!, tagNames);
+      // 3. Return the updated post
+      return await getPostById(post.id!);
     } catch (e) {
-      if (kDebugMode) {
-        print("Error fetching user details by ID: $e");
-      }
-      return null;
+      throw Exception('Failed to update post: $e');
     }
   }
-  Future<bool> checkAuthStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('email');
-    final password = prefs.getString('password');
-    final token=prefs.getString('authToken');
-
-    if (email != null && password != null&&token!=null) {
-
-      final result = await login(email, password);
-      return result['success'];
-    }
-    return false;
-  }
-  Future<List<Map<String, dynamic>>> getNotifications(String type) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
-
-    if (token == null) {
-      throw Exception("Token not found.");
-    }
-
+  // Delete post and all associated data
+  Future<void> deletePost(String postId) async {
     try {
-      final response = await dio.get(
-        'get-notifications',
-        data: {"type": type},
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        return List<Map<String, dynamic>>.from(response.data['notifications']);
-      } else {
-        throw Exception("Failed to load notifications in api services file");
-      }
+      // Just delete the post - cascade will handle the rest
+      await _supabase.from('posts').delete().eq('id', postId);
     } catch (e) {
-      if (kDebugMode) {
-        print("Error fetching notifications in api services file : $e");
+      throw Exception('Failed to delete post: $e');
+    }
+  }
+  // Get posts by tag
+  Future<List<Post>> getPostsByTag(String tagName, {int limit = 10, int offset = 0}) async {
+    try {
+      // Get posts by tag using a join
+      final response = await _supabase
+          .from('post_tags')
+          .select('post_id')
+          .eq('tag_id', await _getTagIdByName(tagName))
+          .range(offset, offset + limit - 1);
+      final postIds = response.map((item) => item['post_id'] as String).toList();
+      // Return empty list if no posts found
+      if (postIds.isEmpty) return [];
+      // Get all the posts
+      final postsResponse = await _supabase
+          .from('posts')
+          .select()
+          .inFilter('id', postIds)
+          .order('timestamp', ascending: false);
+      // Create post objects
+      final posts = postsResponse.map((json) => Post.fromJson(json)).toList();
+      // Get tags for each post
+      for (var i = 0; i < posts.length; i++) {
+        final tags = await _getTagsForPost(posts[i].id!);
+        posts[i] = posts[i].copyWith(tags: tags);
       }
-      return [];
+      return posts;
+    } catch (e) {
+      throw Exception('Failed to get posts by tag: $e');
+    }
+  }
+  
+  // Private helper methods
+  // Get all tags for a post
+  Future<List<String>> _getTagsForPost(String postId) async {
+    // Get tag IDs for the post
+    final postTagsResponse = await _supabase
+        .from('post_tags')
+        .select('tag_id')
+        .eq('post_id', postId);
+
+    final tagIds = postTagsResponse.map<String>((item) => item['tag_id'] as String).toList();
+
+    // If there are no tags, return an empty list
+    if (tagIds.isEmpty) return [];
+
+    // Get tag names using the retrieved tag IDs
+    final tagsResponse = await _supabase
+        .from('tags')
+        .select('name')
+        .inFilter('id', tagIds);
+
+    return tagsResponse.map<String>((tag) => tag['name'] as String).toList();
+}
+
+  // Get or create tag by name
+  Future<String> _getOrCreateTag(String tagName) async {
+    // Normalize tag name
+    final normalizedTag = tagName.trim().toLowerCase();
+    // Try to get existing tag
+    final existing = await _supabase
+        .from('tags')
+        .select()
+        .eq('name', normalizedTag)
+        .maybeSingle();
+    if (existing != null) {
+      return existing['id'];
+    }
+    // Create new tag
+    final created = await _supabase
+        .from('tags')
+        .insert({'name': normalizedTag})
+        .select()
+        .single();
+    return created['id'];
+  }
+  // Get tag ID by name
+  Future<String> _getTagIdByName(String tagName) async {
+    final response = await _supabase
+        .from('tags')
+        .select('id')
+        .eq('name', tagName.trim().toLowerCase())
+        .single();
+    return response['id'];
+  }
+  // Handle tags for a post (delete existing and add new)
+  Future<void> _handleTags(String postId, List<String> tagNames) async {
+    // 1. Delete existing tags
+    await _supabase
+        .from('post_tags')
+        .delete()
+        .eq('post_id', postId);
+    // 2. Add new tags
+    for (var tagName in tagNames) {
+      final tagId = await _getOrCreateTag(tagName);
+      await _supabase.from('post_tags').insert({
+        'post_id': postId,
+        'tag_id': tagId
+      });
     }
   }
 }
