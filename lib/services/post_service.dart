@@ -55,7 +55,7 @@ class PostService {
           .from('posts')
           .select()
           .eq('is_public', true)
-          .order('timestamp', ascending: false)
+          .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
 
       // 2. Create post objects
@@ -112,7 +112,7 @@ class PostService {
           .from('posts')
           .select()
           .inFilter('id', postIds)
-          .order('timestamp', ascending: false);
+          .order('created_at', ascending: false);
       // Create post objects
       final posts = postsResponse.map((json) => Post.fromJson(json)).toList();
       // Get tags for each post
@@ -147,6 +147,79 @@ class PostService {
         .inFilter('id', tagIds);
 
     return tagsResponse.map<String>((tag) => tag['name'] as String).toList();
+}
+// Like a post (toggle functionality)
+Future<void> toggleLikePost(String postId, String userId) async {
+  try {
+    final existingLike = await _supabase
+        .from('likes')
+        .select()
+        .eq('post_id', postId)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (existingLike != null) {
+      // Unlike the post
+      await _supabase
+          .from('likes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', userId);
+    } else {
+      // Like the post
+      await _supabase.from('likes').insert({
+        'post_id': postId,
+        'user_id': userId,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    }
+  } catch (e) {
+    throw Exception('Failed to toggle like: $e');
+  }
+}
+
+// Add a comment to a post
+Future<void> addComment(String postId, String userId, String commentText) async {
+  try {
+    await _supabase.from('comments').insert({
+      'post_id': postId,
+      'user_id': userId,
+      'comment': commentText,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+  } catch (e) {
+    throw Exception('Failed to add comment: $e');
+  }
+}
+
+// Save (Bookmark) a post (toggle functionality)
+Future<void> toggleSavePost(String postId, String userId) async {
+  try {
+    final existingSave = await _supabase
+        .from('saved_posts')
+        .select()
+        .eq('post_id', postId)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (existingSave != null) {
+      // Remove saved post
+      await _supabase
+          .from('saved_posts')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', userId);
+    } else {
+      // Save the post
+      await _supabase.from('saved_posts').insert({
+        'post_id': postId,
+        'user_id': userId,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    }
+  } catch (e) {
+    throw Exception('Failed to toggle save: $e');
+  }
 }
 
   // Get or create tag by name

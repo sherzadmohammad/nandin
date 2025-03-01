@@ -46,6 +46,7 @@ class Post {
   final String? id;
   final String userId;
   final String title;
+  final String description;
   final String imageUrl;
   final String? videoUrl;
   final List<String> ingredients;
@@ -57,7 +58,7 @@ class Post {
   final int commentCount;
   final List<String> savedBy;
   final String cuisine;
-  final DateTime timestamp;
+  final DateTime createdAt;
   final bool isPublic;
   final List<String>? tags; // Will be fetched separately from the tags table
 
@@ -65,6 +66,7 @@ class Post {
     this.id,
     required this.userId,
     required this.title,
+    required this.description,
     required this.imageUrl,
     this.videoUrl,
     required this.ingredients,
@@ -76,7 +78,7 @@ class Post {
     required this.commentCount,
     required this.savedBy,
     required this.cuisine,
-    required this.timestamp,
+    required this.createdAt,
     required this.isPublic,
     this.tags,
   });
@@ -87,6 +89,7 @@ class Post {
       id: json['id'],
       userId: json['user_id'],
       title: json['title'],
+      description: json['description'],
       imageUrl: json['image_url'],
       videoUrl: json['video_url'],
       ingredients: List<String>.from(json['ingredients'] ?? []),
@@ -98,7 +101,7 @@ class Post {
       commentCount: json['comment_count'] ?? 0,
       savedBy: List<String>.from(json['saved_by'] ?? []),
       cuisine: json['cuisine'],
-      timestamp: DateTime.parse(json['timestamp']),
+      createdAt: DateTime.parse(json['created_at']),
       isPublic: json['is_public'] ?? true,
       tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
     );
@@ -109,6 +112,7 @@ class Post {
     return {
       'user_id': userId,
       'title': title,
+      'description': description,
       'image_url': imageUrl,
       'video_url': videoUrl,
       'ingredients': ingredients,
@@ -120,9 +124,8 @@ class Post {
       'comment_count': commentCount,
       'saved_by': savedBy,
       'cuisine': cuisine,
-      'timestamp': timestamp.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
       'is_public': isPublic,
-      // Note: tags are handled separately through the post_tags table
     };
   }
 
@@ -131,6 +134,7 @@ class Post {
     String? id,
     String? userId,
     String? title,
+    String? description,
     String? imageUrl,
     String? videoUrl,
     List<String>? ingredients,
@@ -142,7 +146,7 @@ class Post {
     int? commentCount,
     List<String>? savedBy,
     String? cuisine,
-    DateTime? timestamp,
+    DateTime? createdAt,
     bool? isPublic,
     List<String>? tags,
   }) {
@@ -150,6 +154,7 @@ class Post {
       id: id ?? this.id,
       userId: userId ?? this.userId,
       title: title ?? this.title,
+      description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
       videoUrl: videoUrl ?? this.videoUrl,
       ingredients: ingredients ?? this.ingredients,
@@ -161,7 +166,7 @@ class Post {
       commentCount: commentCount ?? this.commentCount,
       savedBy: savedBy ?? this.savedBy,
       cuisine: cuisine ?? this.cuisine,
-      timestamp: timestamp ?? this.timestamp,
+      createdAt: createdAt ?? this.createdAt,
       isPublic: isPublic ?? this.isPublic,
       tags: tags ?? this.tags,
     );

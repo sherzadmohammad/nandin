@@ -26,7 +26,9 @@ class _AddEditMealPostScreenState extends ConsumerState<AddEditMealPostScreen> {
   final _videoUrlController = TextEditingController();
   final _cuisineController = TextEditingController();
   final _tagsController = TextEditingController();
-  
+  final _descriptionController = TextEditingController();
+
+
   int _duration = 30;
   String _complexity = 'Simple';
   String _affordability = 'Affordable';
@@ -185,7 +187,21 @@ Future<void> _pickImage() async {
                 }
                 return null;
               },
-            ),            
+            ),
+            const SizedBox(height: 16,),
+            TextFormField(
+              controller: _descriptionController,
+              decoration: const InputDecoration(
+                labelText: 'Recipe Description',
+                hintText: 'Enter a description...',
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a title';
+                }
+                return null;
+              },
+            ),    
             const SizedBox(height: 16),
             TextFormField(
               controller: _videoUrlController,
@@ -488,6 +504,7 @@ Future<void> _pickImage() async {
         final newPost = Post(
           userId: currentUser!.id,
           title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
           imageUrl: imageUrl,
           videoUrl: _videoUrlController.text.isEmpty ? null : _videoUrlController.text.trim(),
           ingredients: ingredients,
@@ -499,7 +516,7 @@ Future<void> _pickImage() async {
           commentCount: 0,
           savedBy: [],
           cuisine: _cuisineController.text.trim(),
-          timestamp: DateTime.now(),
+          createdAt: DateTime.now(),
           isPublic: _isPublic,
           tags: tags,
         );
@@ -523,6 +540,7 @@ Future<void> _pickImage() async {
           id: widget.post!.id!,
           userId: widget.post!.userId,
           title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
           imageUrl: _imageUrlController.text.trim(),
           videoUrl: _videoUrlController.text.isEmpty ? null : _videoUrlController.text.trim(),
           ingredients: ingredients,
@@ -534,7 +552,7 @@ Future<void> _pickImage() async {
           commentCount: widget.post!.commentCount,
           savedBy: widget.post!.savedBy,
           cuisine: _cuisineController.text.trim(),
-          timestamp: widget.post!.timestamp,
+          createdAt: widget.post!.createdAt,
           isPublic: _isPublic,
           tags: tags,
         );

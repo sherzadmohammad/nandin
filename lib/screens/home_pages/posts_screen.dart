@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/models/meal_data.dart';
 import 'package:nanden/providers/post_provider.dart';
+import 'package:nanden/providers/supabase_instance_provider.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/home_pages/edit_post_screen.dart';
+import 'package:nanden/services/post_service.dart';
+import 'package:nanden/utils/toast.dart';
 
 
 class MealPostsScreen extends ConsumerStatefulWidget {
@@ -98,16 +101,66 @@ class _MealPostsScreenState extends ConsumerState<MealPostsScreen> {
   }
 }
 
-class MealPostCard extends ConsumerWidget {
+class MealPostCard extends ConsumerStatefulWidget {
   final Post post;
   
   const MealPostCard({super.key, required this.post});
-  
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MealPostCard> createState() => _MealPostCardState();
+}
+
+class _MealPostCardState extends ConsumerState<MealPostCard> {
+ bool isLiked = false;
+bool isSaved = false;
+final PostService postService = PostService();
+String userId = "user_id";
+
+@override
+void initState() {
+  super.initState(); // Call super.initState() first
+  
+  // Get the user ID
+  userId = ref.read(userProvider).asData!.value.id;
+  
+  // Call the function to check if the post is liked
+  _checkIfLiked();
+}
+
+// Separate async function to check if post is liked
+Future<void> _checkIfLiked() async {
+  if (widget.post.id != null) {
+    final supabase = ref.read(supabaseProvider);
+    
+    try {
+      final existingLike = await supabase
+          .from('likes')
+          .select()
+          .eq('post_id', widget.post.id!)
+          .eq('user_id', userId)
+          .maybeSingle();
+      
+      // Update state if the post is liked
+      if (existingLike != null) {
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } catch (e) {
+      // Handle any potential errors
+      if(mounted){
+      showToast(context: context, message: "Error checking like status: $e");
+      }
+    }
+  } else {
+    showToast(context: context, message: "Post ID is null");
+  }
+}
+  @override
+  Widget build(BuildContext context) {
     // Check if this post belongs to current user
-    final currentUser = ref.watch(userProvider).asData?.value;
-    final isOwner = currentUser != null && currentUser.id == post.userId;
+    final currentUser = ref.watch(userProvider).asData!.value;
+    final isOwner = currentUser.id == widget.post.userId;
     
     return Card(
       margin: const EdgeInsets.all(8.0),
@@ -119,14 +172,14 @@ class MealPostCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Recipe image
-          if (post.imageUrl.isNotEmpty)
+          if (widget.post.imageUrl.isNotEmpty)
             Stack(
               children: [
                 AspectRatio(
                   aspectRatio: 16 / 9,
                   child: Image.network(
-                    post.imageUrl,
-                    fit: BoxFit.cover,
+                    widget.post.imageUrl,
+                    fit: BoxFit.fill,
                     errorBuilder: (_, __, ___) => Container(
                       color: Colors.grey[300],
                       child: const Center(
@@ -142,14 +195,14 @@ class MealPostCard extends ConsumerWidget {
                   child: Row(
                     children: [
                       Chip(
-                        label: Text(post.complexity),
+                        label: Text(widget.post.complexity),
                         // ignore: deprecated_member_use
                         backgroundColor: Colors.white.withOpacity(0.8),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       const SizedBox(width: 4),
                       Chip(
-                        label: Text(post.affordability),
+                        label: Text(widget.post.affordability),
                         // ignore: deprecated_member_use
                         backgroundColor: Colors.white.withOpacity(0.8),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -163,16 +216,16 @@ class MealPostCard extends ConsumerWidget {
           // Recipe header with title
           ListTile(
             title: Text(
-              post.title, 
+              widget.post.title, 
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            subtitle: Text('Cuisine: ${post.cuisine} • ${post.duration} min'),
+            subtitle: Text('Cuisine: ${widget.post.cuisine} • ${widget.post.duration} min'),
             trailing: isOwner ? PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'edit') {
-                  _navigateToEditScreen(context, ref, post);
+                  _navigateToEditScreen(context, ref, widget.post);
                 } else if (value == 'delete') {
-                  //_confirmDelete(context, ref, post.id);
+                  _confirmDelete(context, ref, widget.post.id!);
                 }
               },
               itemBuilder: (context) => [
@@ -187,21 +240,21 @@ class MealPostCard extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                _buildInfoItem(Icons.timer, '${post.duration} min'),
-                _buildInfoItem(Icons.thumb_up, '${post.likeCount} likes'),
-                _buildInfoItem(Icons.comment, '${post.commentCount} comments'),
+                _buildInfoItem(Icons.timer, '${widget.post.duration} min'),
+                _buildInfoItem(Icons.thumb_up, '${widget.post.likeCount + (isLiked ? 1 : 0)} likes'),
+                _buildInfoItem(Icons.comment, '${widget.post.commentCount} comments'),
               ],
             ),
           ),
           
           // Tags
-          if (post.tags != null && post.tags!.isNotEmpty)
+          if (widget.post.tags != null && widget.post.tags!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 4,
-                children: post.tags!.map((tag) => Chip(
+                children: widget.post.tags!.map((tag) => Chip(
                   label: Text(tag),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   visualDensity: VisualDensity.compact,
@@ -214,33 +267,62 @@ class MealPostCard extends ConsumerWidget {
             alignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton.icon(
-                icon: const Icon(Icons.thumb_up_outlined),
-                label: const Text('Like'),
-                onPressed: () {
-                  // Like functionality
+                icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: isLiked ? Colors.blue : null),
+                label: Text('Like'),
+                onPressed: () async {
+                  await postService.toggleLikePost(widget.post.id!, userId);
+                  setState(() {
+                    isLiked = !isLiked;
+                  });
                 },
               ),
               TextButton.icon(
                 icon: const Icon(Icons.comment_outlined),
                 label: const Text('Comment'),
                 onPressed: () {
-                  // Comment functionality
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      TextEditingController commentController = TextEditingController();
+                      return AlertDialog(
+                        title: Text('Add Comment'),
+                        content: TextField(controller: commentController, decoration: InputDecoration(hintText: "Enter your comment")),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              await postService.addComment(widget.post.id!, userId, commentController.text.trim());
+                              if(context.mounted){
+                              Navigator.pop(context);
+                              }
+                            },
+                            child: Text('Add'
+                            ,style: Theme.of(context).textTheme.labelLarge,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
               TextButton.icon(
-                icon: const Icon(Icons.bookmark_border),
+                icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, color: isSaved ? Colors.orange : null),
                 label: const Text('Save'),
-                onPressed: () {
-                  // Save functionality
+                onPressed: () async {
+                  await postService.toggleSavePost(widget.post.id!, userId);
+                  setState(() {
+                    isSaved = !isSaved;
+                  });
                 },
               ),
             ],
           ),
+
         ],
       ),
     );
   }
-  
+
   Widget _buildInfoItem(IconData icon, String text) {
     return Expanded(
       child: Row(
@@ -252,7 +334,7 @@ class MealPostCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _navigateToEditScreen(BuildContext context, WidgetRef ref, Post post) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -260,7 +342,7 @@ class MealPostCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _confirmDelete(BuildContext context, WidgetRef ref, String postId) {
     showDialog(
       context: context,

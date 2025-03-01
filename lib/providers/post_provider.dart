@@ -57,7 +57,7 @@ class MealPostsNotifier extends StateNotifier<AsyncValue<List<Post>>> {
   Future<Post?> createPost(Post post, List<String> tags) async {
     try {
       final createdPost = await _postService.createPost(post, tags);
-      
+      print("successfully created the post$createdPost");
       // Refresh the posts list
       await fetchAllPosts();
       
