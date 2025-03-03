@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/models/meal_data.dart';
@@ -8,7 +9,8 @@ import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/home_pages/edit_post_screen.dart';
 import 'package:nanden/services/post_service.dart';
 import 'package:nanden/utils/toast.dart';
-
+import 'package:nanden/widgets/commnt_sheet.dart';
+import 'package:nanden/widgets/dialogs/add_comment_dialog.dart';
 
 class MealPostsScreen extends ConsumerStatefulWidget {
   const MealPostsScreen({super.key});
@@ -278,32 +280,58 @@ Future<void> _checkIfLiked() async {
               ),
               TextButton.icon(
                 icon: const Icon(Icons.comment_outlined),
-                label: const Text('Comment'),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      TextEditingController commentController = TextEditingController();
-                      return AlertDialog(
-                        title: Text('Add Comment'),
-                        content: TextField(controller: commentController, decoration: InputDecoration(hintText: "Enter your comment")),
-                        actions: [
-                          TextButton(
-                            onPressed: () async {
-                              await postService.addComment(widget.post.id!, userId, commentController.text.trim());
-                              if(context.mounted){
-                              Navigator.pop(context);
-                              }
-                            },
-                            child: Text('Add'
-                            ,style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                          ),
-                        ],
+                label: Text('${widget.post.commentCount} Comments'),
+                onPressed: () async {
+                  final postId = widget.post.id!;
+
+                  try {
+                    final commentData = await postService.getComments(postId);
+
+                    final comments = commentData.map((data) {
+                      return Comment(
+                        authorName: data['users']['username'],
+                        authorAvatar: data['users']['avatar_url'],
+                        content: data['content'],
+                        timeAgo: data['created_at'],
                       );
-                    },
-                  );
+                    }).toList();
+                    if(context.mounted){
+                      CommentsSheet.show(
+                        context,
+                        postId,
+                        comments,
+                        (commentText) async {
+                          await postService.addComment(postId, currentUser.id, commentText);
+                          
+                          // Fetch updated comments
+                          final updatedCommentData = await postService.getComments(postId);
+
+                          final updatedComments = updatedCommentData.map((data) {
+                            return Comment(
+                              authorName: data['users']['user'],
+                              authorAvatar: data['users']['profile_photo_path'],
+                              content: data['comment'],
+                              timeAgo: data['created_at'],
+                            );
+                          }).toList();
+
+                          // Reopen the comments sheet with the updated comments
+                          if(context.mounted){
+                            Navigator.pop(context); // Close the current sheet
+                            CommentsSheet.show(context, postId, updatedComments, (newText) async {
+                              await postService.addComment(postId, currentUser.id, newText);
+                            });
+                          }
+                        }
+                      );
+                    }
+                  } catch (e) {
+                    if(kDebugMode){
+                     print('Error fetching comments: $e');
+                    }
+                  }
                 },
+
               ),
               TextButton.icon(
                 icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, color: isSaved ? Colors.orange : null),

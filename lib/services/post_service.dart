@@ -179,16 +179,60 @@ Future<void> toggleLikePost(String postId, String userId) async {
 }
 
 // Add a comment to a post
+// In your PostService class:
+
+// Method to add a new comment
 Future<void> addComment(String postId, String userId, String commentText) async {
   try {
     await _supabase.from('comments').insert({
       'post_id': postId,
       'user_id': userId,
-      'comment': commentText,
+      'content': commentText,  // Using 'content' field from your schema
       'created_at': DateTime.now().toIso8601String(),
+      'updated_at': DateTime.now().toIso8601String(),
+      'is_edited': false
     });
+    // Trigger will automatically update comment_count
   } catch (e) {
     throw Exception('Failed to add comment: $e');
+  }
+}
+
+// Method to fetch comments for a post
+Future<List<Map<String, dynamic>>> getComments(String postId) async {
+  try {
+    final response = await _supabase
+        .from('comments')
+        .select('''
+          id,
+          post_id,
+          user_id,
+          content,
+          created_at,
+          users:user_id (
+            username:name, 
+            avatar_url:user_avatar_path
+          )
+        ''')
+        .eq('post_id', postId)
+        .order('created_at', ascending: false);
+    
+    return response;
+  } catch (e) {
+    throw Exception('Failed to get comments: $e');
+  }
+}
+
+// Method to delete a comment
+Future<void> deleteComment(String commentId) async {
+  try {
+    await _supabase
+        .from('comments')
+        .delete()
+        .eq('id', commentId);
+    // Trigger will automatically update comment_count
+  } catch (e) {
+    throw Exception('Failed to delete comment: $e');
   }
 }
 
