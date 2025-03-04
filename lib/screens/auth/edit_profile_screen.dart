@@ -85,7 +85,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _phoneController.text = initUserData.mobile;
     _addressController.text = initUserData.address;
     gender = initUserData.gender;
-    print('the profilePhotoUrl is: $profilePhotoUrl');
     super.initState();
   }
   @override
@@ -151,7 +150,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       }
     }
     final newPath = supabase.storage.from('profile_pictures').getPublicUrl(filePath);
-    print("the new path is:$newPath");
     return newPath;
   } catch (e) {
     if (kDebugMode) print('Image upload failed: $e');
@@ -188,7 +186,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   if (_selectedImage != null) {
     final uploadedUrl = await _uploadProfilePhoto(_selectedImage!);
-    print("the returned Profile photo url:$uploadedUrl");
     if (uploadedUrl != null && uploadedUrl.isNotEmpty) {
       profilePhotoUrl = uploadedUrl;
     } else {
@@ -205,7 +202,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   try {
-    print("uploading this profilePhotoUrl : $profilePhotoUrl");
     // ✏️ Update user profile in Supabase  
     final response = await supabase
     .from('users')
