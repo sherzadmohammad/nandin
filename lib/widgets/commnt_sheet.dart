@@ -2,6 +2,10 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nanden/providers/user_provider.dart';
+import 'package:nanden/utils/time_ago_formatter.dart';
+import 'package:nanden/widgets/profile_image_widget.dart';
 
 class Comment {
   final String authorName;
@@ -21,7 +25,7 @@ class Comment {
   });
 }
 
-class CommentsSheet extends StatefulWidget {
+class CommentsSheet extends ConsumerStatefulWidget {
   final String postId;
   final List<Comment> comments;
   final Function(String) onAddComment;
@@ -47,13 +51,18 @@ class CommentsSheet extends StatefulWidget {
   }
 
   @override
-  State<CommentsSheet> createState() => _CommentsSheetState();
+  ConsumerState<CommentsSheet> createState() => _CommentsSheetState();
 }
 
-class _CommentsSheetState extends State<CommentsSheet> {
+class _CommentsSheetState extends ConsumerState<CommentsSheet> {
   final TextEditingController _commentController = TextEditingController();
+  var user;
   bool _isLoading = false;
-
+  @override
+  void initState() {
+    user=ref.read(userProvider.notifier).currentUser;
+    super.initState();
+  }
   @override
   void dispose() {
     _commentController.dispose();
@@ -209,10 +218,9 @@ class _CommentsSheetState extends State<CommentsSheet> {
                 ),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.grey[300],
-                      child: const Icon(Icons.person, color: Colors.white),
+                    ProfileImageWidget(
+                      imageUrl: user.userAvatarPath,
+                      size: 30.0,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -306,9 +314,8 @@ class CommentItem extends StatelessWidget {
                             fontSize: 14,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          comment.timeAgo,
+                        const SizedBox(width: 15.0),
+                        Text(timeAgo(context,DateTime.parse(comment.timeAgo) )!,
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 12,

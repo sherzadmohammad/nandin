@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String? timeAgo(BuildContext context, DateTime timestamp) {
   final now = DateTime.now();
@@ -14,30 +14,30 @@ String? timeAgo(BuildContext context, DateTime timestamp) {
   final int years = days ~/ 365;
 
   if (seconds < 60) {
-    return '';// AppLocalizations.of(context)?.time_ago_just_now;
+    return AppLocalizations.of(context)?.time_ago_just_now;
   } else if (minutes < 2) {
-    return '';//AppLocalizations.of(context)?.time_ago_minute;
+    return AppLocalizations.of(context)?.time_ago_minute;
   } else if (minutes < 60) {
-    return '';//AppLocalizations.of(context)?.time_ago_minutes(minutes.toString());
+    return AppLocalizations.of(context)?.time_ago_minutes(minutes.toString());
   } else if (hours < 2) {
-    return '';//AppLocalizations.of(context)?.time_ago_hour;
+    return AppLocalizations.of(context)?.time_ago_hour;
   } else if (hours < 24) {
-    return '';//AppLocalizations.of(context)?.time_ago_hours(hours.toString());
+    return AppLocalizations.of(context)?.time_ago_hours(hours.toString());
   } else if (days < 2) {
-    return '';//AppLocalizations.of(context)?.time_ago_day;
+    return AppLocalizations.of(context)?.time_ago_day;
   } else if (days < 7) {
-    return '';//AppLocalizations.of(context)?.time_ago_days(days.toString());
+    return AppLocalizations.of(context)?.time_ago_days(days.toString());
   } else if (weeks < 2) {
-    return '';//AppLocalizations.of(context)?.time_ago_week;
+    return AppLocalizations.of(context)?.time_ago_week;
   } else if (days < 30) {
-    return '';//AppLocalizations.of(context)?.time_ago_weeks(weeks.toString());
+    return AppLocalizations.of(context)?.time_ago_weeks(weeks.toString());
   } else if (months < 2) {
-    return '';//AppLocalizations.of(context)?.time_ago_month;
+    return AppLocalizations.of(context)?.time_ago_month;
   } else if (days < 365) {
-    return '';//AppLocalizations.of(context)?.time_ago_months(months.toString());
+    return AppLocalizations.of(context)?.time_ago_months(months.toString());
   } else if (years < 2) {
-    return '';//AppLocalizations.of(context)?.time_ago_year;
+    return AppLocalizations.of(context)?.time_ago_year;
   } else {
-    return '';//AppLocalizations.of(context)?.time_ago_years(years.toString());
+    return AppLocalizations.of(context)?.time_ago_years(years.toString());
   }
 }

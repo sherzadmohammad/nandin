@@ -10,7 +10,6 @@ import 'package:nanden/screens/home_pages/edit_post_screen.dart';
 import 'package:nanden/services/post_service.dart';
 import 'package:nanden/utils/toast.dart';
 import 'package:nanden/widgets/commnt_sheet.dart';
-import 'package:nanden/widgets/dialogs/add_comment_dialog.dart';
 
 class MealPostsScreen extends ConsumerStatefulWidget {
   const MealPostsScreen({super.key});

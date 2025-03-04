@@ -14,7 +14,7 @@ class MainDrawer extends StatelessWidget {
                 gradient: LinearGradient(
                     colors: [
                       Theme.of(context).colorScheme.primaryContainer,
-                      Theme.of(context).colorScheme.primaryContainer.withOpacity(0.8)
+                      Theme.of(context).colorScheme.primaryContainer.withAlpha((0.8 * 255).toInt()),
                     ],
                   begin: Alignment.topLeft,
                   end:Alignment.topRight

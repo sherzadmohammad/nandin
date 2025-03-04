@@ -21,7 +21,7 @@ class _ProfileSectionState extends State<ProfileSection> {
       boxShadow: const [
         BoxShadow(
             blurRadius: 2,
-            color: Color(0xff0a0c400f)
+            color: Color.fromARGB(9, 12, 64, 15)
         )
       ]
   );
