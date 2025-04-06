@@ -149,27 +149,26 @@ class PostService {
     return tagsResponse.map<String>((tag) => tag['name'] as String).toList();
 }
 // Like a post (toggle functionality)
-Future<void> toggleLikePost(String postId, String userId) async {
+Future<void> toggleLike(String itemId, String userId, {required bool isComment}) async {
   try {
+    final column = isComment ? 'comment_id' : 'post_id'; // Determine column based on type
+
     final existingLike = await _supabase
         .from('likes')
         .select()
-        .eq('post_id', postId)
+        .eq(column, itemId)
         .eq('user_id', userId)
         .maybeSingle();
 
     if (existingLike != null) {
-      // Unlike the post
-      await _supabase
-          .from('likes')
-          .delete()
-          .eq('post_id', postId)
-          .eq('user_id', userId);
+      // Unlike the item (post or comment)
+      await _supabase.from('likes').delete().eq('id', existingLike['id']);
     } else {
-      // Like the post
+      // Like the item (post or comment)
       await _supabase.from('likes').insert({
-        'post_id': postId,
+        column: itemId, // Either post_id or comment_id
         'user_id': userId,
+        'type': isComment ? 'comment' : 'post', // To differentiate likes
         'created_at': DateTime.now().toIso8601String(),
       });
     }
@@ -178,25 +177,25 @@ Future<void> toggleLikePost(String postId, String userId) async {
   }
 }
 
-// Add a comment to a post
-// In your PostService class:
+
 
 // Method to add a new comment
-Future<void> addComment(String postId, String userId, String commentText) async {
-  try {
-    await _supabase.from('comments').insert({
-      'post_id': postId,
-      'user_id': userId,
-      'content': commentText,  // Using 'content' field from your schema
-      'created_at': DateTime.now().toIso8601String(),
-      'updated_at': DateTime.now().toIso8601String(),
-      'is_edited': false
-    });
-    // Trigger will automatically update comment_count
-  } catch (e) {
-    throw Exception('Failed to add comment: $e');
+Future<void> addComment(String postId, String userId, String text) async {
+    try {
+      if (postId.isEmpty || userId.isEmpty || text.isEmpty) {
+        throw Exception('Invalid input data');
+      }
+
+      await _supabase.from('comments').insert({
+        'post_id': postId,
+        'user_id': userId,
+        'content': text,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      throw Exception('Failed to add comment: $e');
+    }
   }
-}
 
 // Method to fetch comments for a post
 Future<List<Map<String, dynamic>>> getComments(String postId) async {
@@ -210,8 +209,8 @@ Future<List<Map<String, dynamic>>> getComments(String postId) async {
           content,
           created_at,
           users:user_id (
-            username:name, 
-            avatar_url:user_avatar_path
+            name,
+            user_avatar_path
           )
         ''')
         .eq('post_id', postId)
@@ -219,7 +218,7 @@ Future<List<Map<String, dynamic>>> getComments(String postId) async {
     
     return response;
   } catch (e) {
-    throw Exception('Failed to get comments: $e');
+      throw Exception('Failed to fetch comments: $e');
   }
 }
 

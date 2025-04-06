@@ -1,5 +1,4 @@
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/models/meal_data.dart';
@@ -10,6 +9,7 @@ import 'package:nanden/screens/home_pages/edit_post_screen.dart';
 import 'package:nanden/services/post_service.dart';
 import 'package:nanden/utils/toast.dart';
 import 'package:nanden/widgets/commnt_sheet.dart';
+import '../../providers/comments_provider.dart';
 
 class MealPostsScreen extends ConsumerStatefulWidget {
   const MealPostsScreen({super.key});
@@ -242,7 +242,7 @@ Future<void> _checkIfLiked() async {
             child: Row(
               children: [
                 _buildInfoItem(Icons.timer, '${widget.post.duration} min'),
-                _buildInfoItem(Icons.thumb_up, '${widget.post.likeCount + (isLiked ? 1 : 0)} likes'),
+                _buildInfoItem(Icons.thumb_up, '${widget.post.likeCount} likes'),
                 _buildInfoItem(Icons.comment, '${widget.post.commentCount} comments'),
               ],
             ),
@@ -271,7 +271,7 @@ Future<void> _checkIfLiked() async {
                 icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: isLiked ? Colors.blue : null),
                 label: Text('Like'),
                 onPressed: () async {
-                  await postService.toggleLikePost(widget.post.id!, userId);
+                  await postService.toggleLike(widget.post.id!, userId,isComment: false);
                   setState(() {
                     isLiked = !isLiked;
                   });
@@ -280,56 +280,21 @@ Future<void> _checkIfLiked() async {
               TextButton.icon(
                 icon: const Icon(Icons.comment_outlined),
                 label: Text('${widget.post.commentCount} Comments'),
-                onPressed: () async {
-                  final postId = widget.post.id!;
+                onPressed: () {
+  final postId = widget.post.id!;
+  // Trigger fetch manually before showing the sheet
+  ref.read(postProvider.notifier).fetchComments(postId);
 
-                  try {
-                    final commentData = await postService.getComments(postId);
+  // Immediately show the sheet (content will update based on state)
+  CommentsSheet.show(
+    context,
+    postId,
+    (commentText) async {
+      await ref.read(postProvider.notifier).addComment(postId, currentUser.id, commentText);
+    },
+  );
+},
 
-                    final comments = commentData.map((data) {
-                      return Comment(
-                        authorName: data['users']['username'],
-                        authorAvatar: data['users']['avatar_url'],
-                        content: data['content'],
-                        timeAgo: data['created_at'],
-                      );
-                    }).toList();
-                    if(context.mounted){
-                      CommentsSheet.show(
-                        context,
-                        postId,
-                        comments,
-                        (commentText) async {
-                          await postService.addComment(postId, currentUser.id, commentText);
-                          
-                          // Fetch updated comments
-                          final updatedCommentData = await postService.getComments(postId);
-
-                          final updatedComments = updatedCommentData.map((data) {
-                            return Comment(
-                              authorName: data['users']['user'],
-                              authorAvatar: data['users']['profile_photo_path'],
-                              content: data['comment'],
-                              timeAgo: data['created_at'],
-                            );
-                          }).toList();
-
-                          // Reopen the comments sheet with the updated comments
-                          if(context.mounted){
-                            Navigator.pop(context); // Close the current sheet
-                            CommentsSheet.show(context, postId, updatedComments, (newText) async {
-                              await postService.addComment(postId, currentUser.id, newText);
-                            });
-                          }
-                        }
-                      );
-                    }
-                  } catch (e) {
-                    if(kDebugMode){
-                     print('Error fetching comments: $e');
-                    }
-                  }
-                },
 
               ),
               TextButton.icon(
@@ -344,7 +309,6 @@ Future<void> _checkIfLiked() async {
               ),
             ],
           ),
-
         ],
       ),
     );

@@ -1,37 +1,33 @@
 class Comment {
-  final String commentId;
-  final String userId;
-  final String username;
-  final String text;
-  final DateTime timestamp;
+  final String? id;
+  final String authorName;
+  final String authorAvatar;
+  final String content;
+  final String timeAgo;
+  final int likes;
+  final List<Comment> replies;
 
   Comment({
-    required this.commentId,
-    required this.userId,
-    required this.username,
-    required this.text,
-    required this.timestamp,
+    this.id,
+    required this.authorName,
+    required this.authorAvatar,
+    required this.content,
+    required this.timeAgo,
+    this.likes = 0,
+    this.replies = const [],
   });
 
-  // Convert a Comment object to a Map
-  Map<String, dynamic> toMap() {
-    return {
-      'commentId': commentId,
-      'userId': userId,
-      'username': username,
-      'text': text,
-      'timestamp': timestamp.toIso8601String(),
-    };
-  }
-
-  // Create a Comment object from a Map
-  factory Comment.fromMap(Map<String, dynamic> map) {
+  // fromJson method to create a Comment from the response data
+  factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      commentId: map['commentId'],
-      userId: map['userId'],
-      username: map['username'],
-      text: map['text'],
-      timestamp: DateTime.parse(map['timestamp']),
+      id: json['id']?.toString(), // Safely convert to String, assuming id is nullable
+      authorName: json['users']?['name'] ?? 'Unknown', // Handle nulls and nested data
+      authorAvatar: json['users']?['user_avatar_path'] ?? '',
+      content: json['content'] ?? '',
+      timeAgo: json['created_at'] ?? '',
+      likes: json['likes'] ?? 0, // Adjust as per your table structure
+      // Assuming replies are not part of the direct comment data; you can handle them as needed
+      replies: [], // Modify this if replies come from the database as a separate field
     );
   }
 }
