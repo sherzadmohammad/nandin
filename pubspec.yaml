@@ -48,6 +48,9 @@ dependencies:
   intl: any
   shimmer: ^3.0.0
   path: ^1.9.0
+  video_player: ^2.9.5
+  chewie: ^1.11.1
+  youtube_player_flutter: ^9.1.1
 
 dev_dependencies:
   flutter_test:

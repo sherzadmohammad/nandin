@@ -151,12 +151,12 @@ class PostService {
 // Like a post (toggle functionality)
 Future<void> toggleLike(String itemId, String userId, {required bool isComment}) async {
   try {
-    final column = isComment ? 'comment_id' : 'post_id'; // Determine column based on type
+    final columnToCheck = isComment ? 'comment_id' : 'post_id';
 
     final existingLike = await _supabase
         .from('likes')
         .select()
-        .eq(column, itemId)
+        .eq(columnToCheck, itemId)
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -165,12 +165,22 @@ Future<void> toggleLike(String itemId, String userId, {required bool isComment})
       await _supabase.from('likes').delete().eq('id', existingLike['id']);
     } else {
       // Like the item (post or comment)
-      await _supabase.from('likes').insert({
-        column: itemId, // Either post_id or comment_id
+      final insertData = {
         'user_id': userId,
-        'type': isComment ? 'comment' : 'post', // To differentiate likes
+        'type': isComment ? 'comment' : 'post',
         'created_at': DateTime.now().toIso8601String(),
-      });
+      };
+      
+      // Add the correct ID to the correct column
+      if (isComment) {
+        insertData['comment_id'] = itemId;
+        // Don't include post_id at all when it should be null
+      } else {
+        insertData['post_id'] = itemId;
+        // Don't include comment_id at all when it should be null
+      }
+      
+      await _supabase.from('likes').insert(insertData);
     }
   } catch (e) {
     throw Exception('Failed to toggle like: $e');

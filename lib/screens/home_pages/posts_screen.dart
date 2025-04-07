@@ -6,6 +6,7 @@ import 'package:nanden/providers/post_provider.dart';
 import 'package:nanden/providers/supabase_instance_provider.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/home_pages/edit_post_screen.dart';
+import 'package:nanden/screens/home_pages/post_detail_screen.dart';
 import 'package:nanden/services/post_service.dart';
 import 'package:nanden/utils/toast.dart';
 import 'package:nanden/widgets/commnt_sheet.dart';
@@ -163,153 +164,160 @@ Future<void> _checkIfLiked() async {
     final currentUser = ref.watch(userProvider).asData!.value;
     final isOwner = currentUser.id == widget.post.userId;
     
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Recipe image
-          if (widget.post.imageUrl.isNotEmpty)
-            Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: Image.network(
-                    widget.post.imageUrl,
-                    fit: BoxFit.fill,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported, size: 50),
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context)=>PostDetailScreen(post: widget.post))
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.all(8.0),
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Recipe image
+            if (widget.post.imageUrl.isNotEmpty)
+              Stack(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Image.network(
+                      widget.post.imageUrl,
+                      fit: BoxFit.fill,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(Icons.image_not_supported, size: 50),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                // Complexity and affordability chips
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Row(
-                    children: [
-                      Chip(
-                        label: Text(widget.post.complexity),
-                        // ignore: deprecated_member_use
-                        backgroundColor: Colors.white.withOpacity(0.8),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      const SizedBox(width: 4),
-                      Chip(
-                        label: Text(widget.post.affordability),
-                        // ignore: deprecated_member_use
-                        backgroundColor: Colors.white.withOpacity(0.8),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ],
+                  // Complexity and affordability chips
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Row(
+                      children: [
+                        Chip(
+                          label: Text(widget.post.complexity),
+                          // ignore: deprecated_member_use
+                          backgroundColor: Colors.white.withOpacity(0.8),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        const SizedBox(width: 4),
+                        Chip(
+                          label: Text(widget.post.affordability),
+                          // ignore: deprecated_member_use
+                          backgroundColor: Colors.white.withOpacity(0.8),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ],
+                    ),
                   ),
+                ],
+              ),
+            
+            // Recipe header with title
+            ListTile(
+              title: Text(
+                widget.post.title, 
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              subtitle: Text('Cuisine: ${widget.post.cuisine} • ${widget.post.duration} min'),
+              trailing: isOwner ? PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    _navigateToEditScreen(context, ref, widget.post);
+                  } else if (value == 'delete') {
+                    _confirmDelete(context, ref, widget.post.id!);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                ],
+              ) : null,
+            ),
+            
+            // Quick info row
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  _buildInfoItem(Icons.timer, '${widget.post.duration} min'),
+                  _buildInfoItem(Icons.thumb_up, '${widget.post.likeCount} likes'),
+                  _buildInfoItem(Icons.comment, '${widget.post.commentCount} comments'),
+                ],
+              ),
+            ),
+            
+            // Tags
+            if (widget.post.tags != null && widget.post.tags!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: widget.post.tags!.map((tag) => Chip(
+                    label: Text(tag),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: VisualDensity.compact,
+                  )).toList(),
+                ),
+              ),
+            
+            // Action buttons
+            OverflowBar(
+              alignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton.icon(
+                  icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: isLiked ? Colors.blue : null),
+                  label: Text('Like'),
+                  onPressed: () async {
+                    await postService.toggleLike(widget.post.id!, userId,isComment: false);
+                    setState(() {
+                      isLiked = !isLiked;
+                    });
+                  },
+                ),
+                TextButton.icon(
+                  icon: const Icon(Icons.comment_outlined),
+                  label: Text('${widget.post.commentCount} Comments'),
+                  onPressed: () {
+                  final postId = widget.post.id!;
+                  // Trigger fetch manually before showing the sheet
+                  ref.read(postProvider.notifier).fetchComments(postId);
+      
+                  // Immediately show the sheet (content will update based on state)
+                  CommentsSheet.show(
+                    context,
+                    postId,
+                    (commentText) async {
+                      await ref.read(postProvider.notifier).addComment(postId, currentUser.id, commentText);
+                    },
+                  );
+                },
+      
+      
+                ),
+                TextButton.icon(
+                  icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, color: isSaved ? Colors.orange : null),
+                  label: const Text('Save'),
+                  onPressed: () async {
+                    await postService.toggleSavePost(widget.post.id!, userId);
+                    setState(() {
+                      isSaved = !isSaved;
+                    });
+                  },
                 ),
               ],
             ),
-          
-          // Recipe header with title
-          ListTile(
-            title: Text(
-              widget.post.title, 
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            subtitle: Text('Cuisine: ${widget.post.cuisine} • ${widget.post.duration} min'),
-            trailing: isOwner ? PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'edit') {
-                  _navigateToEditScreen(context, ref, widget.post);
-                } else if (value == 'delete') {
-                  _confirmDelete(context, ref, widget.post.id!);
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                const PopupMenuItem(value: 'delete', child: Text('Delete')),
-              ],
-            ) : null,
-          ),
-          
-          // Quick info row
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                _buildInfoItem(Icons.timer, '${widget.post.duration} min'),
-                _buildInfoItem(Icons.thumb_up, '${widget.post.likeCount} likes'),
-                _buildInfoItem(Icons.comment, '${widget.post.commentCount} comments'),
-              ],
-            ),
-          ),
-          
-          // Tags
-          if (widget.post.tags != null && widget.post.tags!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: widget.post.tags!.map((tag) => Chip(
-                  label: Text(tag),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  visualDensity: VisualDensity.compact,
-                )).toList(),
-              ),
-            ),
-          
-          // Action buttons
-          OverflowBar(
-            alignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TextButton.icon(
-                icon: Icon(isLiked ? Icons.thumb_up : Icons.thumb_up_outlined, color: isLiked ? Colors.blue : null),
-                label: Text('Like'),
-                onPressed: () async {
-                  await postService.toggleLike(widget.post.id!, userId,isComment: false);
-                  setState(() {
-                    isLiked = !isLiked;
-                  });
-                },
-              ),
-              TextButton.icon(
-                icon: const Icon(Icons.comment_outlined),
-                label: Text('${widget.post.commentCount} Comments'),
-                onPressed: () {
-  final postId = widget.post.id!;
-  // Trigger fetch manually before showing the sheet
-  ref.read(postProvider.notifier).fetchComments(postId);
-
-  // Immediately show the sheet (content will update based on state)
-  CommentsSheet.show(
-    context,
-    postId,
-    (commentText) async {
-      await ref.read(postProvider.notifier).addComment(postId, currentUser.id, commentText);
-    },
-  );
-},
-
-
-              ),
-              TextButton.icon(
-                icon: Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, color: isSaved ? Colors.orange : null),
-                label: const Text('Save'),
-                onPressed: () async {
-                  await postService.toggleSavePost(widget.post.id!, userId);
-                  setState(() {
-                    isSaved = !isSaved;
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
