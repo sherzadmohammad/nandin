@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../models/meal_data.dart';
@@ -17,7 +15,7 @@ class PostDetailScreen extends StatefulWidget {
   State<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 
-class _PostDetailScreenState extends State<PostDetailScreen> {
+class _PostDetailScreenState extends State<PostDetailScreen> with SingleTickerProviderStateMixin {
   late YoutubePlayerController _youtubeController;
   bool _isVideoInitialized = false;
 
@@ -90,9 +88,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   Widget _buildAppBar() {
     return SliverAppBar(
-      expandedHeight: 120.0,
+      expandedHeight: 100.0,
       floating: false,
-      pinned: true,
+      pinned: false,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           widget.post.title,
