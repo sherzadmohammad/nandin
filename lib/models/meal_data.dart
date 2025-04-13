@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+
+import 'user_data.dart';
 enum Complexity{
   simple,
   challenging,
@@ -54,13 +56,14 @@ class Post {
   final int duration;
   final String complexity;
   final String affordability;
-  final int likeCount;
+  late final int likeCount;
   final int commentCount;
   final List<String> savedBy;
   final String cuisine;
   final DateTime createdAt;
   final bool isPublic;
   final List<String>? tags; // Will be fetched separately from the tags table
+  final UserData? userData;
 
   Post({
     this.id,
@@ -81,6 +84,7 @@ class Post {
     required this.createdAt,
     required this.isPublic,
     this.tags,
+    this.userData
   });
 
   // Create Post from Supabase JSON response
@@ -104,6 +108,7 @@ class Post {
       createdAt: DateTime.parse(json['created_at']),
       isPublic: json['is_public'] ?? true,
       tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
+      
     );
   }
 
@@ -149,6 +154,7 @@ class Post {
     DateTime? createdAt,
     bool? isPublic,
     List<String>? tags,
+    UserData? userData,
   }) {
     return Post(
       id: id ?? this.id,
@@ -169,6 +175,7 @@ class Post {
       createdAt: createdAt ?? this.createdAt,
       isPublic: isPublic ?? this.isPublic,
       tags: tags ?? this.tags,
+      userData: userData ?? this.userData,
     );
   }
 }

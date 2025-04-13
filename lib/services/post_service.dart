@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:nanden/models/meal_data.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/user_data.dart';
+
 class PostService {
   final SupabaseClient _supabase;
   PostService() : _supabase = Supabase.instance.client;
@@ -187,6 +189,15 @@ Future<void> toggleLike(String itemId, String userId, {required bool isComment})
   }
 }
 
+Future<UserData?> getUserById(String userId) async {
+  final response = await _supabase
+      .from('users')
+      .select()
+      .eq('id', userId)
+      .single();
+
+  return UserData.fromJson(response);
+}
 
 
 // Method to add a new comment
