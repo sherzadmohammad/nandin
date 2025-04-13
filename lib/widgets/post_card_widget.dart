@@ -133,9 +133,9 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                 children: [
                   // User avatar
                   CircleAvatar(
-                    radius: 20,
+                    radius: 30,
                     backgroundColor: Colors.grey.shade200,
-                    backgroundImage: posterAvatar != null && posterAvatar!.isNotEmpty
+                    backgroundImage: widget.user.userAvatarPath.isNotEmpty
                         ? NetworkImage(widget.user.userAvatarPath)
                         : null,
                     child: widget.user.userAvatarPath.isEmpty

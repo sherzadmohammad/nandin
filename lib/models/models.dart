@@ -10,28 +10,27 @@ import 'package:flutter/material.dart';
     Language(this.id, this.name, this.imgUrl);
     
    }
-   Language language=isKuMode?Language(1, 'kurdish', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT538iXTZpenpRNl4l25JpakqS_5VjF0FNCSQ&s'):
-       Language(2, 'english', 'https://i.pinimg.com/474x/96/21/13/962113523cc0dea940896a4205cb0993.jpg');
+   
 List models = [
- Category(id: 'c1', title:isKuMode? 'ئیتالی': 'Italian', color: Colors.purple,
+ Category(id: 'c1', title: 'Italian', color: Colors.purple,
   imageUrl: 'https://i.pinimg.com/474x/3c/47/cb/3c47cba5ce721f9b683b706105034a10.jpg',),
- Category(id: 'c2', title:isKuMode? 'خێرا و ئاسان': 'Quick & Easy', color: Colors.red,
+ Category(id: 'c2', title: 'Quick & Easy', color: Colors.red,
   imageUrl: 'https://hips.hearstapps.com/hmg-prod/images/easy-dinner-ideas-tuna-melt-64529b179c289.jpg',),
- Category(id: 'c10', title:isKuMode? 'هاوینە': 'Summer', color: Colors.teal,
+ Category(id: 'c10', title: 'Summer', color: Colors.teal,
      imageUrl: 'https://cdn.pixabay.com/photo/2018/04/09/18/26/asparagus-3304997_1280.jpg'),
- Category(id: 'c9', title:isKuMode? 'کوردەواری': 'kurdish',color: Colors.pink,
+ Category(id: 'c9', title: 'kurdish',color: Colors.pink,
      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT538iXTZpenpRNl4l25JpakqS_5VjF0FNCSQ&s'),
- Category(id: 'c3', title:isKuMode? 'بەرگر': 'Hamburgers',color: Colors.orange,
+ Category(id: 'c3', title:'Hamburgers',color: Colors.orange,
   imageUrl: 'https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg',),
- Category(id: 'c4', title:isKuMode? 'ئەڵمانی': 'German', color: Colors.amber,
+ Category(id: 'c4', title: 'German', color: Colors.amber,
   imageUrl: 'https://i.pinimg.com/474x/53/23/eb/5323eb1abb0fef6f2cfde0b1f7e94c2c.jpg',),
- Category(id: 'c5', title:isKuMode? 'بێ چەوری': 'Light & Lovely', color: Colors.blue,
+ Category(id: 'c5', title: 'Light & Lovely', color: Colors.blue,
   imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7tx36ZJWq-gBke3vqQAcoQzIzyQvaSDrwmQ&s',),
- Category(id: 'c6',title:isKuMode? 'بیانی دەگمەن': 'Exotic', color: Colors.green,
+ Category(id: 'c6',title: 'Exotic', color: Colors.green,
   imageUrl: 'https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1280.jpg',),
- Category(id: 'c7', title:isKuMode? 'بەیانیان': 'Breakfast', color: Colors.lightBlue,
+ Category(id: 'c7', title:'Breakfast', color: Colors.lightBlue,
      imageUrl: 'https://cdn.pixabay.com/photo/2018/07/10/21/23/pancake-3529653_1280.jpg'),
- Category(id: 'c8', title:isKuMode? 'ئاسیایی': 'Asian', color: Colors.lightGreen,
+ Category(id: 'c8', title:'Asian', color: Colors.lightGreen,
      imageUrl: 'https://cdn.pixabay.com/photo/2018/06/18/16/05/indian-food-3482749_1280.jpg'),
 
 ];
@@ -45,20 +44,13 @@ List models = [
    'c2',
    'c9'
   ],
-  title:isKuMode?'': 'Spaghetti with Tomato Sauce',
+  title: 'Spaghetti with Tomato Sauce',
   affordability: Affordability.affordable,
   complexity: Complexity.simple,
   imageUrl:
   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg/800px-Spaghetti_Bolognese_mit_Parmesan_oder_Grana_Padano.jpg',
   duration: 20,
-  ingredients:isKuMode?[
-   '٤ تەماتە',
-   'یەک کەوچکی چێشت زەیتی زەیتون',
-   '١ پیاز',
-   '٢٥٠گم مەحکەرۆنی',
-   'بەهارات',
-   'پەنیر(ئارەزومەندانەیە)'
-  ]: [
+  ingredients:[
    '4 Tomatoes',
    '1 Tablespoon of Olive Oil',
    '1 Onion',
@@ -66,15 +58,7 @@ List models = [
    'Spices',
    'Cheese (optional)'
   ],
-  steps:isKuMode?[
-   'تەماتە و پیازەکە بکە بە پارچەی بچووک.',
-   'بڕێک ئاو بکوڵێنە - کاتێک کوڵا خوێی تێبکە.',
-   'سپاگێتیەکە بخەرە ناو ئاوی کوڵاوەوە - پێویستە لە ماوەی نزیکەی ١٠ بۆ ١٢ خولەکدا ئەنجام بدرێت.',
-   'لەم نێوەندەدا هەندێک زەیتی زەیتون بە تافر بکە و پیازە بڕاوەکەی تێبکە.',
-   'دوای ٢ خولەک پارچە تەماتە و خوێ و بیبەر و بەهاراتەکانی تری تێبکە.',
-   'سۆسەکە تەواو دەبێت کاتێک سپاگێتیەکان بوون.',
-   'ئازادانە هەندێک پەنیر بخەرە سەر خواردنە تەواوەکە.'
-  ]: [
+  steps:[
    'Cut the tomatoes and the onion into small pieces.',
    'Boil some water - add salt to it once it boils.',
    'Put the spaghetti into the boiling water - they should be done in about 10 to 12 minutes.',
@@ -99,25 +83,14 @@ List models = [
   imageUrl:
   'https://cdn.pixabay.com/photo/2018/07/11/21/51/toast-3532016_1280.jpg',
   duration: 10,
-  ingredients:isKuMode?[
-   '1 پارچە نانی سپی',
-   '1 پارچە هام',
-   '1 پارچە ئەناناس',
-   '1-2 پارچە پەنیر',
-   'کەرە',
-
-  ]: [
+  ingredients:[
    '1 Slice White Bread',
    '1 Slice Ham',
    '1 Slice Pineapple',
    '1-2 Slices of Cheese',
    'Butter'
   ],
-  steps:isKuMode?[
-   'لایەکی نانە سپییەکە کەرە بکە',
-   'چین چین هام و ئەناناس و پەنیرەکە لەسەر نانە سپییەکە',
-   'تۆستەکە بۆ ماوەی نزیکەی ١٠ خولەک لەناو فڕنەکەدا لە پلەی گەرمی ٢٠٠ پلەی سەدیدا بیبرژێنە'
-  ]: [
+  steps:[
    'Butter one side of the white bread',
    'Layer ham, the pineapple and cheese on the white bread',
    'Bake the toast for round about 10 minutes in the oven at 200°C'
@@ -139,14 +112,7 @@ List models = [
   imageUrl:
   'https://cdn.pixabay.com/photo/2014/10/23/18/05/burger-500054_1280.jpg',
   duration: 45,
-  ingredients:isKuMode?[
-   'قیمەی گۆشت',
-   '١تەماتە',
-   '1 خەیار',
-   '١ پیاز',
-   'کەچەب',
-   '٢ سەمون ؛ بەرگر'
-  ]: [
+  ingredients:[
    '300g Cattle Hack',
    '1 Tomato',
    '1 Cucumber',
@@ -154,12 +120,7 @@ List models = [
    'Ketchup',
    '2 Burger Buns'
   ],
-  steps:isKuMode?[
-   'هەر دوو لای گۆشتەکە سۆرکەوە بۆ ماوەی ٤ خولەک',
-   'بە خێرایی نانەکان سوربکەرەوە بۆ ماوەی 1 خولەک لە هەر لایەک',
-   'نانەکان بە کەچەب خۆش بکە',
-   'بەرگر لەگەڵ تەماتە و خەیار و پیاز پێشکەش بکە'
-  ]: [
+  steps:[
    'Form 2 patties',
    'Fry the patties for c. 4 minutes on each side',
    'Quickly fry the buns for c. 1 minute on each side',
@@ -182,16 +143,7 @@ List models = [
   imageUrl:
   'https://cdn.pixabay.com/photo/2018/03/31/19/29/schnitzel-3279045_1280.jpg',
   duration: 60,
-  ingredients:isKuMode?[
-   '8 کۆترە گۆشتی گوێدرێژ',
-   '٤ هێلکە',
-   '٢٠٠گم وردە نان',
-   '١٠٠گم ئارد',
-   '٣٠٠گم کەرە',
-   '١٠٠گم رۆنی روەکی',
-   'خوێ',
-   'یەك پارچە لیمۆ'
-  ]: [
+  ingredients:[
    '8 Veal Cutlets',
    '4 Eggs',
    '200g Bread Crumbs',
@@ -201,7 +153,7 @@ List models = [
    'Salt',
    'Lemon Slices'
   ],
-  steps:isKuMode?[]:
+  steps:
   [
    'Tenderize the veal to about 2–4mm, and salt on both sides.',
    'On a flat plate, stir the eggs briefly with a fork.',
@@ -223,13 +175,13 @@ Meal(
    'c5',
    'c10',
   ],
-  title:isKuMode?'':  'Salad with Smoked Salmon',
+  title:  'Salad with Smoked Salmon',
   affordability: Affordability.luxurious,
   complexity: Complexity.simple,
   imageUrl:
   'https://cdn.pixabay.com/photo/2016/10/25/13/29/smoked-salmon-salad-1768890_1280.jpg',
   duration: 15,
-  ingredients:isKuMode?[]: [
+  ingredients: [
    'Arugula',
    'Lamb\'s Lettuce',
    'Parsley',
@@ -240,7 +192,7 @@ Meal(
    'Olive Oil',
    'Salt and Pepper'
   ],
-  steps:isKuMode?[]: [
+  steps: [
    'Wash and cut salad and herbs',
    'Dice the salmon',
    'Process mustard, vinegar and olive oil into a dressing',
@@ -258,13 +210,13 @@ Meal(
    'c6',
    'c10',
   ],
-  title:isKuMode?'':  'Delicious Orange Mousse',
+  title: 'Delicious Orange Mousse',
   affordability: Affordability.affordable,
   complexity: Complexity.hard,
   imageUrl:
   'https://cdn.pixabay.com/photo/2017/05/01/05/18/pastry-2274750_1280.jpg',
   duration: 240,
-  ingredients:isKuMode?[]: [
+  ingredients: [
    '4 Sheets of Gelatin',
    '150ml Orange Juice',
    '80g Sugar',
@@ -272,7 +224,7 @@ Meal(
    '200g Cream',
    'Orange Peel',
   ],
-  steps:isKuMode?[]: [
+  steps:[
    'Dissolve gelatin in pot',
    'Add orange juice and sugar',
    'Take pot off the stove',
@@ -293,13 +245,13 @@ Meal(
   categories: [
    'c7',
   ],
-  title:isKuMode?'':  'Pancakes',
+  title: 'Pancakes',
   affordability: Affordability.affordable,
   complexity: Complexity.simple,
   imageUrl:
   'https://cdn.pixabay.com/photo/2018/07/10/21/23/pancake-3529653_1280.jpg',
   duration: 20,
-  ingredients:isKuMode?[]: [
+  ingredients:[
    '1 1/2 Cups all-purpose Flour',
    '3 1/2 Teaspoons Baking Powder',
    '1 Teaspoon Salt',
@@ -308,7 +260,7 @@ Meal(
    '1 Egg',
    '3 Tablespoons Butter, melted',
   ],
-  steps:isKuMode?[]: [
+  steps: [
    'In a large bowl, sift together the flour, baking powder, salt and sugar.',
    'Make a well in the center and pour in the milk, egg and melted butter; mix until smooth.',
    'Heat a lightly oiled griddle or frying pan over medium high heat.',
@@ -324,13 +276,13 @@ Meal(
   categories: [
    'c8',
   ],
-  title:isKuMode?'':  'Creamy Indian Chicken Curry',
+  title: 'Creamy Indian Chicken Curry',
   affordability: Affordability.pricey,
   complexity: Complexity.challenging,
   imageUrl:
   'https://cdn.pixabay.com/photo/2018/06/18/16/05/indian-food-3482749_1280.jpg',
   duration: 35,
-  ingredients:isKuMode?[]: [
+  ingredients:[
    '4 Chicken Breasts',
    '1 Onion',
    '2 Cloves of Garlic',
@@ -339,7 +291,7 @@ Meal(
    '1 Teaspoon Cayenne Pepper',
    '500ml Coconut Milk',
   ],
-  steps:isKuMode?[]: [
+  steps:[
    'Slice and fry the chicken breast',
    'Process onion, garlic and ginger into paste and saute everything',
    'Add spices and stir fry',
@@ -363,7 +315,7 @@ Meal(
   imageUrl:
   'https://cdn.pixabay.com/photo/2014/08/07/21/07/souffle-412785_1280.jpg',
   duration: 45,
-  ingredients:isKuMode?[]: [
+  ingredients: [
    '1 Teaspoon melted Butter',
    '2 Tablespoons white Sugar',
    '2 Ounces 70% dark Chocolate, broken into pieces',
@@ -377,7 +329,7 @@ Meal(
    '1 Pinch Cream of Tartar',
    '1 Tablespoon white Sugar',
   ],
-  steps:isKuMode?[]: [
+  steps: [
    'Preheat oven to 190°C. Line a rimmed baking sheet with parchment paper.',
    'Brush bottom and sides of 2 ramekins lightly with 1 teaspoon melted butter; cover bottom and sides right up to the rim.',
    'Add 1 tablespoon white sugar to ramekins. Rotate ramekins until sugar coats all surfaces.',
@@ -408,20 +360,20 @@ Meal(
    'c5',
    'c10',
   ],
-  title:isKuMode?'':  'Asparagus Salad with Cherry Tomatoes',
+  title: 'Asparagus Salad with Cherry Tomatoes',
   affordability: Affordability.luxurious,
   complexity: Complexity.simple,
   imageUrl:
   'https://cdn.pixabay.com/photo/2018/04/09/18/26/asparagus-3304997_1280.jpg',
   duration: 30,
-  ingredients:isKuMode?[]: [
+  ingredients: [
    'White and Green Asparagus',
    '30g Pine Nuts',
    '300g Cherry Tomatoes',
    'Salad',
    'Salt, Pepper and Olive Oil'
   ],
-  steps:isKuMode?[]: [
+  steps: [
    'Wash, peel and cut the asparagus',
    'Cook in salted water',
    'Salt and pepper the asparagus',
