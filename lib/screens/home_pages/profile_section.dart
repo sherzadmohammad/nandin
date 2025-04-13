@@ -4,6 +4,7 @@ import 'package:nanden/widgets/profile_image_widget.dart';
 import 'package:nanden/widgets/profile_tiles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../models/user_data.dart';
+import '../../widgets/change_language_widget.dart';
 import '../../widgets/dialogs/logout_dialog.dart';
 class ProfileSection extends StatefulWidget {
   const ProfileSection({super.key, required this.user});
@@ -102,7 +103,18 @@ class _ProfileSectionState extends State<ProfileSection> {
                         CustomProfileTiles(
                           icon: Icons.translate_outlined,
                           title: AppLocalizations.of(context)!.profile_language,
-                          onTap: (){},),
+                          onTap: (){
+                          showModalBottomSheet(
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(24.0),
+                                  topRight: Radius.circular(24.0),
+                                ),
+                              ),
+                              builder: (context)=>const ChangeLanguageWidget()
+                          );
+                        },),
                         divider,
                         CustomProfileTiles(
                           icon: Icons.star_border_outlined,

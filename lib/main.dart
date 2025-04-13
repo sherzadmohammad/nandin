@@ -10,6 +10,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nanden/l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'providers/localization_controller.dart';
+
 
 const supabaseUrl ='https://chaszkfcxuirksawyrrx.supabase.co';
 const supabaseKey= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoYXN6a2ZjeHVpcmtzYXd5cnJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc4MDQwNDcsImV4cCI6MjA1MzM4MDA0N30.gstA5viU7Ms6VsS-AjYjx3D08EAz5pD7tFHh2ZkV8_4';
@@ -28,16 +30,17 @@ Future<void> main() async{
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final locale = ref.watch(localeProvider);
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       theme: lightTheme,
       supportedLocales: L10n.all,
-      locale: const Locale('en'),
+      locale: locale,
       localizationsDelegates:const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
