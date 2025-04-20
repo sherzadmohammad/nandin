@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:nanden/models/meal_data.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/user_data.dart';
+import '../utils/toast.dart';
 
 class PostService {
   final SupabaseClient _supabase;
@@ -255,33 +257,53 @@ Future<void> deleteComment(String commentId) async {
     throw Exception('Failed to delete comment: $e');
   }
 }
+ Future<bool> isPostSaved(String postId, String userId) async {
+  final saved = await _supabase
+      .from('saved_posts')
+      .select('id')
+      .eq('post_id', postId)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+  return saved != null;
+}
+Future<List<String>> getSavedPostIds(String userId) async {
+  final response = await _supabase
+      .from('saved_posts')
+      .select('post_id')
+      .eq('user_id', userId);
+
+  return List<String>.from(response.map((row) => row['post_id']));
+}
 
 // Save (Bookmark) a post (toggle functionality)
-Future<void> toggleSavePost(String postId, String userId) async {
+Future<void> toggleSavePost(BuildContext context, String postId, String userId) async {
   try {
-    final existingSave = await _supabase
-        .from('saved_posts')
-        .select()
-        .eq('post_id', postId)
-        .eq('user_id', userId)
-        .maybeSingle();
+    final saved = await isPostSaved(postId, userId);
 
-    if (existingSave != null) {
-      // Remove saved post
+    if (saved) {
+      // If already saved, remove it
       await _supabase
-          .from('saved_posts')
-          .delete()
-          .eq('post_id', postId)
-          .eq('user_id', userId);
+        .from('saved_posts')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', userId);
+        if(context.mounted){
+          showToast(context: context, message: 'Post deleted from favorites!');
+        }
     } else {
-      // Save the post
+      // Otherwise, save the post
       await _supabase.from('saved_posts').insert({
         'post_id': postId,
         'user_id': userId,
         'created_at': DateTime.now().toIso8601String(),
       });
+      if(context.mounted){
+        showToast(context: context, message: 'Post saved to favorites!');
+      }
     }
   } catch (e) {
+    debugPrint('Error toggling save post: $e');
     throw Exception('Failed to toggle save: $e');
   }
 }

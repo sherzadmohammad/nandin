@@ -84,7 +84,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
                     ),
                   ),
                   BottomNavigationBarItem(
-                    label: "screens",
+                    label: AppLocalizations.of(context)!.bottomNavigationItems_search,
                     icon: Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: _buildSvgIcon('assets/icons/morning.svg', _currentScreen==2)

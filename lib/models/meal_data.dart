@@ -56,9 +56,9 @@ class Post {
   final int duration;
   final String complexity;
   final String affordability;
-  late final int likeCount;
+  late int likeCount;
   final int commentCount;
-  final List<String> savedBy;
+  final int savedCount;
   final String cuisine;
   final DateTime createdAt;
   final bool isPublic;
@@ -79,7 +79,7 @@ class Post {
     required this.affordability,
     required this.likeCount,
     required this.commentCount,
-    required this.savedBy,
+    required this.savedCount,
     required this.cuisine,
     required this.createdAt,
     required this.isPublic,
@@ -103,7 +103,7 @@ class Post {
       affordability: json['affordability'],
       likeCount: json['like_count'] ?? 0,
       commentCount: json['comment_count'] ?? 0,
-      savedBy: List<String>.from(json['saved_by'] ?? []),
+      savedCount: json['saved_count']?? 0,
       cuisine: json['cuisine'],
       createdAt: DateTime.parse(json['created_at']),
       isPublic: json['is_public'] ?? true,
@@ -127,7 +127,7 @@ class Post {
       'affordability': affordability,
       'like_count': likeCount,
       'comment_count': commentCount,
-      'saved_by': savedBy,
+      'saved_count': savedCount,
       'cuisine': cuisine,
       'created_at': createdAt.toIso8601String(),
       'is_public': isPublic,
@@ -170,7 +170,7 @@ class Post {
       affordability: affordability ?? this.affordability,
       likeCount: likeCount ?? this.likeCount,
       commentCount: commentCount ?? this.commentCount,
-      savedBy: savedBy ?? this.savedBy,
+      savedCount: savedCount,
       cuisine: cuisine ?? this.cuisine,
       createdAt: createdAt ?? this.createdAt,
       isPublic: isPublic ?? this.isPublic,

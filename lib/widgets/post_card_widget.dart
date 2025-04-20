@@ -7,6 +7,7 @@ import '../models/meal_data.dart';
 import '../models/user_data.dart';
 import '../providers/comments_provider.dart';
 import '../providers/post_provider.dart';
+import '../providers/saved_post_provider.dart';
 import '../providers/supabase_instance_provider.dart';
 import '../providers/user_provider.dart';
 import '../screens/home_pages/edit_post_screen.dart';
@@ -14,6 +15,7 @@ import '../screens/home_pages/post_detail_screen.dart';
 import '../services/post_service.dart';
 import '../utils/toast.dart';
 import 'commnt_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostCardWidget extends ConsumerStatefulWidget {
   final Post post;
@@ -29,25 +31,15 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
   bool isLiked = false;
   bool isSaved = false;
   final PostService postService = PostService();
-  String userId = "user_id";
-  String? posterName;
-  String? posterAvatar;
+  late final String userId;
 
-  @override
-  void initState() {
-    super.initState();
-    
-    // Get the current user ID
-    userId = ref.read(userProvider).asData!.value.id;
-    
-    // Check if the p
-    _checkIfLiked();
-    
-    // Check if the post is saved
-    _checkIfSaved();
-    
-    
-  }
+@override
+void initState() {
+  super.initState();
+  userId = ref.read(userProvider).asData!.value.id;
+  _checkIfLiked();
+}
+
 
  
 
@@ -77,43 +69,24 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
     }
   }
   
-  // Check if post is saved
-  Future<void> _checkIfSaved() async {
-    if (widget.post.id != null) {
-      final supabase = ref.read(supabaseProvider);
-      
-      try {
-        final savedPost = await supabase
-            .from('saved_posts')
-            .select()
-            .eq('post_id', widget.post.id!)
-            .eq('user_id', userId)
-            .maybeSingle();
-        
-        if (savedPost != null && mounted) {
-          setState(() {
-            isSaved = true;
-          });
-        }
-      } catch (e) {
-        // Handle errors silently
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     // Check if this post belongs to current user
     final currentUser = ref.watch(userProvider).asData!.value;
+    final savedPostIds = ref.watch(savedPostsProvider(userId));
+
+    final isSaved = savedPostIds.contains(widget.post.id);
     final isOwner = currentUser.id == widget.post.userId;
     final theme = Theme.of(context);
-    
     // Format date (assuming post has a createdAt field, if not add it)
     final createdAt = timeAgo(context, DateTime.parse(widget.post.createdAt.toString()));
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => PostDetailScreen(post: widget.post))
+          MaterialPageRoute(
+            builder: (context) => PostDetailScreen(post: widget.post,userId:currentUser.id)
+          )
         );
       },
       child: Card(
@@ -284,7 +257,7 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                   ),
                 ],
               ),
-              
+            
             // Cuisine type and info row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -299,7 +272,7 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Cuisine: ${widget.post.cuisine}',
+                      '${AppLocalizations.of(context)!.generalReviews} ${widget.post.cuisine}',
                       style: TextStyle(
                         color: theme.colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.w500,
@@ -313,7 +286,7 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                     children: [
                       _buildStatItem(Icons.thumb_up, '${widget.post.likeCount} likes', isLiked ? theme.colorScheme.primary : Colors.grey),
                       _buildStatItem(Icons.comment, '${widget.post.commentCount} comments', Colors.grey),
-                      _buildStatItem(Icons.saved_search, '${widget.post.savedBy.length} saved', Colors.grey),
+                      _buildStatItem(Icons.saved_search, '${widget.post.savedCount.toString()} saved', Colors.grey),
                     ],
                   ),
                 ],
@@ -365,7 +338,7 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                         if (isLiked) {
                           widget.post.likeCount = (widget.post.likeCount) + 1;
                         } else {
-                          widget.post.likeCount = (widget.post.likeCount) - 1;
+                          widget.post.likeCount = (widget.post.likeCount) ;
                         }
                       });
                     },
@@ -395,12 +368,11 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                   _buildActionButton(
                     icon: isSaved ? Icons.bookmark : Icons.bookmark_border,
                     label: 'Save',
-                    color: isSaved ? Colors.orange : null,
+                    color: isSaved ? theme.colorScheme.primary : null,
                     onPressed: () async {
-                      await postService.toggleSavePost(widget.post.id!, userId);
-                      setState(() {
-                        isSaved = !isSaved;
-                      });
+                      debugPrint('🔍 userId in the post card : $userId');
+
+                      ref.read(savedPostsProvider(userId).notifier).toggleSave(context, widget.post.id!);
                     },
                   ),
                   _buildActionButton(
@@ -408,9 +380,7 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
                     label: 'Share',
                     onPressed: () {
                       // Implement share functionality
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Sharing feature coming soon!')),
-                      );
+                      showToast(context: context, message: 'Sharing feature coming soon!');
                     },
                   ),
                 ],

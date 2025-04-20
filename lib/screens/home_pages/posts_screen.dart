@@ -24,9 +24,7 @@ class _MealPostsScreenState extends ConsumerState<MealPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Watch the meal posts state
-    final postsAsync = ref.watch(mealPostsProvider);
-    // Watch the user state
+
     final userAsync = ref.watch(userProvider);
     final postsWithUserAsync = ref.watch(postsWithUserProvider);
     return Scaffold(
@@ -52,7 +50,10 @@ class _MealPostsScreenState extends ConsumerState<MealPostsScreen> {
     return RefreshIndicator(
       onRefresh: () async {
         // Invalidate and re-fetch the provider manually
-        await ref.refresh(postsWithUserProvider.future);
+        final response= await ref.refresh(postsWithUserProvider.future);
+        
+          postsWithUser=response;
+        
       },
 
       child: ListView.builder(

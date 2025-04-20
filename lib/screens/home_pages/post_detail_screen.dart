@@ -1,24 +1,25 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 import '../../models/meal_data.dart';
+import '../../providers/saved_post_provider.dart';
 
 
 
-class PostDetailScreen extends StatefulWidget {
-  final Post post;
+class PostDetailScreen extends ConsumerStatefulWidget {
+  final Post post; final String userId;
 
-  const PostDetailScreen({super.key, required this.post});
+  const PostDetailScreen({super.key, required this.post,required this.userId});
 
   @override
-  State<PostDetailScreen> createState() => _PostDetailScreenState();
+  ConsumerState<PostDetailScreen> createState() => _PostDetailScreenState();
 }
 
-class _PostDetailScreenState extends State<PostDetailScreen> with SingleTickerProviderStateMixin {
+class _PostDetailScreenState extends ConsumerState<PostDetailScreen> with SingleTickerProviderStateMixin {
   late YoutubePlayerController _youtubeController;
-  bool _isVideoInitialized = false;
-
+  bool _isVideoInitialized = false;  
   @override
   void initState() {
     super.initState();
@@ -41,10 +42,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> with SingleTickerPr
           _isVideoInitialized = true;
         });
       } else {
-        print("Invalid YouTube URL");
+        if(kDebugMode){
+          print("Invalid YouTube URL");
+        }
       }
     }
   }
+
+
+ 
 
   @override
   void dispose() {
@@ -54,6 +60,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    final savedPostIds = ref.watch(savedPostsProvider(widget.userId));
+    final isSaved = savedPostIds.contains(widget.post.id);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -75,11 +84,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> with SingleTickerPr
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: isSaved? Colors.orange:Colors.grey,
+        foregroundColor: isSaved? Colors.deepOrange:Colors.blueGrey,
         onPressed: () {
-          // Add your action here (e.g., save the post)
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Post saved to favorites!')),
-          );
+
+          ref.read(savedPostsProvider(widget.userId).notifier).toggleSave(context,widget.post.id!);
         },
         child: Icon(Icons.bookmark),
       ),
@@ -378,7 +387,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> with SingleTickerPr
             children: [
               _buildStatItem(Icons.favorite, widget.post.likeCount.toString(), 'Likes'),
               _buildStatItem(Icons.comment, widget.post.commentCount.toString(), 'Comments'),
-              _buildStatItem(Icons.bookmark, widget.post.savedBy.length.toString(), 'Saved'),
+              _buildStatItem(Icons.bookmark, widget.post.savedCount.toString(), 'Saved'),
             ],
           ),
         ],

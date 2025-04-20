@@ -10,6 +10,7 @@ import 'package:nanden/utils/toast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../themes/input_field_decoration.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 

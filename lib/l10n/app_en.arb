@@ -60,7 +60,6 @@
     "forgetPassword_alert_title": "Check your email",
     "forgetPassword_alert_body": "We have send password recovery instruction to your email",
   
-  
     "newPassword_appbar": "New Password",
     "newPassword_header": "Create new password",
     "newPassword_title": "Choose a new password for",
@@ -90,7 +89,6 @@
     "chipFilters_private": "Private",
     "chipFilters_online": "Online",
   
-  
     "notification_appbar": "Notification",
     "notification_off_header": "Allow notifications",
     "notification_off_title": "Turn on notifications to get class recommendations and updates, No spam! We Promise.",
@@ -98,7 +96,6 @@
     "notification_empty_header": "No notification yet",
     "notification_empty_title": "We’ll notify you here for upcoming Classes and other important updates.",
     "notification_btn_delete": "Delete Notification",
-  
   
     "details_available": "Available in",
     "details_language": "Course Language",
@@ -128,7 +125,6 @@
     "message_header": "Really,no question?",
     "message_title": "Here you can ask your teachers anything, or discuss your learning goal.",
     "message_btn": "Find a teacher",
-  
   
     "conversation_body": "Send a friendly message to this teacher, share your goals, and get feedback.",
     "conversation_chat_hint": "Your message",
@@ -162,7 +158,6 @@
     "about_vision_body": "Lorem ipsum dolor sit amet consectetur. Adipiscing accumsan velit nunc facilisi. Phasellus mattis hgu pharetra praesent ornare consequat congue, hjjjolg bhbhh Elementum cras nibh laoreet pretium fusce, Adipiscing blandit quis varius.Lorem ipsum dolor sit amet consectetur. Adipiscing accumsan velit nunc facilisi. Phasellus mattis hgu pharetra praesent ornare consequat congue, hjjjolg bhbhh Elementum cras nibh laoreet pretium fusce, Adipiscing blandit quis varius.",
     "about_mission": "FerPro's Mission",
     "about_ul": "laoreet pretium fusce, Adipiscing blandit quis  edudeb",
-  
   
     "courses_appbar": "Courses",
     "courses_current": "Current",
@@ -208,16 +203,13 @@
     "bottomSheet_removeAll_btn": "Remove All",
     "bottomSheet_btn": "Show Results",
   
-  
     "bottomSheet_camera": "Take a photo",
     "bottomSheet_library": "Choose from Gallery",
     "bottomSheet_removePhoto": "Remove current photo",
   
-  
-    "generalReviews": "General Reviews",
-    "showMore_btn": "Read more",
-    "listTile_side_btn_delete": "Delete",
-  
+    "generalReviews": "Like",
+    "showMore_btn": "Comment",
+    "listTile_side_btn_delete": "Saved",
   
      "time_ago_just_now": "just now",
       "time_ago_seconds": "{seconds}s ago",
