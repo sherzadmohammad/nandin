@@ -4,7 +4,6 @@ import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/constants/loading_data.dart';
 import 'package:nanden/screens/home_pages/posts_screen.dart';
 import 'package:nanden/screens/home_pages/profile_section.dart';
-import '../../providers/favorite_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../providers/filters_provider.dart';
@@ -31,7 +30,6 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     final filteredMeals = ref.watch(filteredMealsProvider);
     Widget activeScreen = MainBodyScreen(availableMeals: filteredMeals);
 
-    final favoriteMeal = ref.watch(favoriteMealsProvider);
     final userAsyncValue = ref.watch(userProvider);
 
     return userAsyncValue.when(
@@ -40,9 +38,8 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
           activeScreen = MainBodyScreen(availableMeals: filteredMeals);
           
         } else if(_currentScreen == 1){
-          activeScreen = MealsScreen(
-            title: "Favorite",
-            meals: favoriteMeal,
+          activeScreen = SavedPostsScreen(
+            userId: user.id,
           );
         }else if(_currentScreen ==2){
           activeScreen=MealPostsScreen();

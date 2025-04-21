@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nanden/models/models.dart';
 import 'package:nanden/widgets/category_grid_item.dart';
-import 'package:nanden/screens/home_pages/meals_screen.dart';
 import '../../models/content_data.dart';
 import '../../models/meal_data.dart';
 class MainBodyScreen extends StatefulWidget {
@@ -24,15 +23,7 @@ class _MainBodyScreenState extends State<MainBodyScreen> with SingleTickerProvid
     _animationController.forward();
   }
 void selectCategory(BuildContext context,Category category){
-  final filteredMeals= widget.availableMeals.where((meal) => meal.categories.contains(category.id)).toList();
-  Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (ctx)=>
-              MealsScreen(title:category.title ,
-                meals: filteredMeals,
-               )
-      )
-  );
+  
 }
   @override
   Widget build(BuildContext context) {

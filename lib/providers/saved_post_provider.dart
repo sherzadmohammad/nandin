@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/post_service.dart';
 import 'comments_provider.dart';
+import 'post_with_user_provider.dart';
 
 class SavedPostsNotifier extends StateNotifier<Set<String>> {
   final PostService _postService;
@@ -32,3 +33,15 @@ final savedPostsProvider = StateNotifierProvider.family<SavedPostsNotifier, Set<
   final postService = ref.watch(postServiceProvider);
   return SavedPostsNotifier(postService, userId);
 });
+
+final savedPostsWithUserProvider = Provider.family<List<PostWithUser>, String>((ref, userId) {
+  final savedIds = ref.watch(savedPostsProvider(userId));
+  final allPosts = ref.watch(postsWithUserProvider).maybeWhen(
+    data: (posts) => posts,
+    orElse: () => <PostWithUser>[],
+  );
+
+  return allPosts.where((post) => savedIds.contains(post.post.id)).toList();
+});
+
+
