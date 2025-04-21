@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/utils/time_ago_formatter.dart';
+import 'package:nanden/widgets/profile_image_widget.dart';
 import '../models/meal_data.dart';
 import '../models/user_data.dart';
 import '../providers/comments_provider.dart';
@@ -105,15 +106,9 @@ void initState() {
               child: Row(
                 children: [
                   // User avatar
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.grey.shade200,
-                    backgroundImage: widget.user.userAvatarPath.isNotEmpty
-                        ? NetworkImage(widget.user.userAvatarPath)
-                        : null,
-                    child: widget.user.userAvatarPath.isEmpty
-                        ? Icon(Icons.person, color: Colors.grey.shade700)
-                        : null,
+                  ProfileImageWidget(
+                    imageUrl: widget.user.userAvatarPath,
+                    size: 60,
                   ),
                   const SizedBox(width: 12),
                   // User name and post time

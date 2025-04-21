@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nanden/providers/post_provider.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/home_pages/edit_post_screen.dart';
+import 'package:nanden/widgets/profile_image_widget.dart';
 import '../../providers/post_with_user_provider.dart';
 import '../../widgets/post_card_widget.dart';
 
@@ -25,23 +26,9 @@ class _MealPostsScreenState extends ConsumerState<MealPostsScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final userAsync = ref.watch(userProvider);
     final postsWithUserAsync = ref.watch(postsWithUserProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recipe Feed'),
-        actions: [
-          // Show username in app bar if available
-          userAsync.when(
-            data: (userData) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(child: Text(userData.name)),
-            ),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
-        ],
-      ),
+      
       body: postsWithUserAsync.when(
   data: (postsWithUser) {
     if (postsWithUser.isEmpty) {
