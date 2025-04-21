@@ -9,7 +9,7 @@ import '../utils/toast.dart';
 class PostService {
   final SupabaseClient _supabase;
   PostService() : _supabase = Supabase.instance.client;
-  // Create a new post with tags
+  // Create a new post with tags.
   Future<Post> createPost(Post post, List<String> tagNames) async {
     // Start a transaction
     try {
@@ -33,7 +33,7 @@ class PostService {
       throw Exception('Failed to create post: $e');
     }
   }
-  // Get post by ID with its tags
+  // Get post by ID with its tags.
   Future<Post> getPostById(String postId) async {
     try {
       // 1. Get the post
@@ -51,10 +51,10 @@ class PostService {
       throw Exception('Failed to get post: $e');
     }
   }
-  // Get all posts with their tags
+  // Get all posts with their tags.
   Future<List<Post>> getAllPosts({int limit = 10, int offset = 0}) async {
     try {
-      // 1. Get posts
+      // 1. Get posts.
       final response = await _supabase
           .from('posts')
           .select()
@@ -62,9 +62,9 @@ class PostService {
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
 
-      // 2. Create post objects
+      // 2. Create post objects.
       final posts = response.map((json) => Post.fromJson(json)).toList();
-      // 3. Get tags for each post
+      // 3. Get tags for each post.
       for (var i = 0; i < posts.length; i++) {
         final tags = await _getTagsForPost(posts[i].id!);
         posts[i] = posts[i].copyWith(tags: tags);

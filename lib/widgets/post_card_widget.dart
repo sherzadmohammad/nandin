@@ -286,7 +286,7 @@ void initState() {
                     children: [
                       _buildStatItem(Icons.thumb_up, '${widget.post.likeCount} likes', isLiked ? theme.colorScheme.primary : Colors.grey),
                       _buildStatItem(Icons.comment, '${widget.post.commentCount} comments', Colors.grey),
-                      _buildStatItem(Icons.saved_search, '${widget.post.savedCount.toString()} saved', Colors.grey),
+                      _buildStatItem(Icons.saved_search, '${isSaved ? widget.post.savedCount + 1 : widget.post.savedCount} saved', Colors.grey),
                     ],
                   ),
                 ],
@@ -370,9 +370,7 @@ void initState() {
                     label: 'Save',
                     color: isSaved ? theme.colorScheme.primary : null,
                     onPressed: () async {
-                      debugPrint('🔍 userId in the post card : $userId');
-
-                      ref.read(savedPostsProvider(userId).notifier).toggleSave(context, widget.post.id!);
+                      ref.watch(savedPostsProvider(userId).notifier).toggleSave(context, widget.post.id!);
                     },
                   ),
                   _buildActionButton(

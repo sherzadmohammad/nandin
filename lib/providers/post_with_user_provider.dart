@@ -13,7 +13,7 @@ class PostWithUser {
 
 final postsWithUserProvider = FutureProvider.autoDispose<List<PostWithUser>>((ref) async {
   final postService = ref.watch(postServiceProvider);
-  final posts = await postService.getAllPosts();
+  final List<Post> posts = await postService.getAllPosts();
 
   // Cache to avoid refetching the same user
   final Map<String, UserData> userCache = {};
