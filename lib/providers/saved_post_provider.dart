@@ -36,7 +36,7 @@ final savedPostsProvider = StateNotifierProvider.family<SavedPostsNotifier, Set<
 
 final savedPostsWithUserProvider = Provider.family<List<PostWithUser>, String>((ref, userId) {
   final savedIds = ref.watch(savedPostsProvider(userId));
-  final allPosts = ref.watch(searchPostsWithUserProvider).maybeWhen(
+  final allPosts = ref.watch(postsWithUserProvider).maybeWhen(
     data: (posts) => posts,
     orElse: () => <PostWithUser>[],
   );

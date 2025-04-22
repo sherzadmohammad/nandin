@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nanden/providers/user_provider.dart';
 import 'package:nanden/screens/constants/loading_data.dart';
-import 'package:nanden/screens/home_pages/posts_screen.dart';
+import 'package:nanden/screens/home_pages/search_post_screen.dart';
 import 'package:nanden/screens/home_pages/profile_section.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'main_body_screen.dart';
-import 'meals_screen.dart';
+import 'home_screen.dart';
+import 'saved_post_screen.dart';
 
 class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});

@@ -8,7 +8,7 @@ void showToast({required BuildContext context, required String message}) {
       duration: Duration(seconds: 3),
       content: Text(message),
       action: SnackBarAction(
-          label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar,
+          label: 'Close', onPressed: scaffold.hideCurrentSnackBar,
       ),
     ),
   );

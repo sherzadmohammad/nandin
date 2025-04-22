@@ -22,7 +22,7 @@ class PostCardWidget extends ConsumerStatefulWidget {
   final Post post;
   final UserData user;
   
-  const PostCardWidget( {super.key, required this.post, required this.user});
+  const PostCardWidget({super.key, required this.post, required this.user});
 
   @override
   ConsumerState<PostCardWidget> createState() => _MealPostCardState();
@@ -34,15 +34,12 @@ class _MealPostCardState extends ConsumerState<PostCardWidget> {
   final PostService postService = PostService();
   late final String userId;
 
-@override
-void initState() {
-  super.initState();
-  userId = ref.read(userProvider).asData!.value.id;
-  _checkIfLiked();
-}
-
-
- 
+  @override
+  void initState() {
+    super.initState();
+    userId = ref.read(userProvider).asData!.value.id;
+    _checkIfLiked();
+  }
 
   // Check if post is liked
   Future<void> _checkIfLiked() async {
@@ -70,7 +67,6 @@ void initState() {
     }
   }
   
-
   @override
   Widget build(BuildContext context) {
     // Check if this post belongs to current user
@@ -86,7 +82,7 @@ void initState() {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => PostDetailScreen(post: widget.post,userId:currentUser.id)
+            builder: (context) => PostDetailScreen(post: widget.post, userId: currentUser.id)
           )
         );
       },
@@ -117,7 +113,7 @@ void initState() {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.user.name ,
+                          widget.user.name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -156,7 +152,7 @@ void initState() {
             
             // Post title
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
               child: Text(
                 widget.post.title,
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -164,6 +160,57 @@ void initState() {
                 ),
               ),
             ),
+            
+            // Tags - Enhanced section
+            if (widget.post.tags != null && widget.post.tags!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: widget.post.tags!.map((tag) => Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              theme.colorScheme.secondary.withOpacity(0.7),
+                              theme.colorScheme.secondary.withOpacity(0.9),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '#$tag',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                ),
+              ),
+            
+            const SizedBox(height: 8),
             
             // Recipe image
             if (widget.post.imageUrl.isNotEmpty)
@@ -279,38 +326,14 @@ void initState() {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildStatItem(Icons.thumb_up, '${ widget.post.likeCount} likes', Colors.grey),
+                      _buildStatItem(Icons.thumb_up, '${widget.post.likeCount} likes', Colors.grey),
                       _buildStatItem(Icons.comment, '${widget.post.commentCount} comments', Colors.grey),
-                      _buildStatItem(Icons.saved_search, '${ widget.post.savedCount} saved', Colors.grey),
+                      _buildStatItem(Icons.bookmark, '${widget.post.savedCount} saved', Colors.grey),
                     ],
                   ),
                 ],
               ),
             ),
-            
-            // Tags
-            if (widget.post.tags != null && widget.post.tags!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: widget.post.tags!.map((tag) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      '#$tag',
-                      style: TextStyle(
-                        color: Colors.grey.shade800,
-                        fontSize: 12,
-                      ),
-                    ),
-                  )).toList(),
-                ),
-              ),
             
             // Divider
             Divider(color: Colors.grey.shade300, height: 1),
@@ -333,7 +356,7 @@ void initState() {
                         if (isLiked) {
                           widget.post.likeCount = (widget.post.likeCount) + 1;
                         } else {
-                          widget.post.likeCount = (widget.post.likeCount) ;
+                          widget.post.likeCount = (widget.post.likeCount) - 1;
                         }
                       });
                     },
