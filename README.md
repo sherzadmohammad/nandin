@@ -1,16 +1,32 @@
-# nanden
+# Nandin App
 
-A new Flutter project.
+A social cooking platform that helps users plan meals, discover recipes, and connect with other food enthusiasts.
+
+## Overview
+
+Nandin makes cooking easier by letting you plan meals around ingredients you already have. Share your recipes, get inspired by others, and save time in the kitchen.
+
+Check out our landing page: [https://nanding-landing.vercel.app/]
+
+## Tech Stack
+
+- Flutter for cross-platform mobile development
+- Supabase for backend and authentication
+- Riverpod for state management
+
+## Features
+
+- User accounts (signup, login, profiles)
+- Social feed with recipes and cooking tips
+- Post your own recipes with photos
+- Like and comment on other posts
+- Browse recipes by category or ingredients
+- Multi-language support (English, Kurdish, Arabic)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Clone the repo
+2. Run flutter pub get
+3. Connect your Supabase credentials
+4. Run with flutter run
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
