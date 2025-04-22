@@ -51,6 +51,22 @@ class PostService {
       throw Exception('Failed to get post: $e');
     }
   }
+  Future<List<Post>> getPostsByIds(List<String> postIds) async {
+  try {
+    final response = await _supabase
+        .from('posts')
+        .select()
+        .inFilter('id', postIds)
+        .eq('is_public', true)
+        .order('created_at', ascending: false) as List;
+
+    return response.map((e) => Post.fromJson(e)).toList();
+  } catch (e) {
+    throw Exception('Failed to fetch posts by IDs: $e');
+  }
+}
+
+
   // Get all posts with their tags.
   Future<List<Post>> getAllPosts({int limit = 10, int offset = 0}) async {
     try {

@@ -279,9 +279,9 @@ void initState() {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildStatItem(Icons.thumb_up, '${widget.post.likeCount} likes', isLiked ? theme.colorScheme.primary : Colors.grey),
+                      _buildStatItem(Icons.thumb_up, '${ widget.post.likeCount} likes', Colors.grey),
                       _buildStatItem(Icons.comment, '${widget.post.commentCount} comments', Colors.grey),
-                      _buildStatItem(Icons.saved_search, '${isSaved ? widget.post.savedCount + 1 : widget.post.savedCount} saved', Colors.grey),
+                      _buildStatItem(Icons.saved_search, '${ widget.post.savedCount} saved', Colors.grey),
                     ],
                   ),
                 ],

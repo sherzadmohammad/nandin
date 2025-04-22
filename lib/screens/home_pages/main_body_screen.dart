@@ -1,56 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:nanden/models/models.dart';
-import 'package:nanden/widgets/category_grid_item.dart';
-import '../../models/content_data.dart';
-import '../../models/meal_data.dart';
-class MainBodyScreen extends StatefulWidget {
-  const MainBodyScreen({super.key, required this.availableMeals});
-  final List<Meal> availableMeals;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nanden/providers/user_provider.dart';
+import 'package:nanden/screens/home_pages/edit_post_screen.dart';
+import '../../providers/post_with_user_provider.dart';
+import '../../widgets/post_card_widget.dart';
+
+class AllPostsScreen extends ConsumerWidget {
+  const AllPostsScreen({super.key});
+
   @override
-  State<MainBodyScreen> createState() => _MainBodyScreenState();
-}
-class _MainBodyScreenState extends State<MainBodyScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  @override
-  void initState() {
-    super.initState();
-    _animationController=AnimationController(
-      vsync: this,
-      duration:const Duration(milliseconds:400),
-      lowerBound:0.0,
-      upperBound:1.0,
-    );
-    _animationController.forward();
-  }
-void selectCategory(BuildContext context,Category category){
-  
-}
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(animation:_animationController,
-        child:GridView(
-            padding: const EdgeInsets.all(8.0),
-            gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount:2,
-                childAspectRatio:2/3,
-                crossAxisSpacing: 20,
-                mainAxisSpacing:20
+  Widget build(BuildContext context, WidgetRef ref) {
+    final postsWithUserAsync = ref.watch(postsWithUserProvider); // Unfiltered provider
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('All Recipes'),
+        centerTitle: true,
+      ),
+      body: postsWithUserAsync.when(
+        data: (postsWithUser) {
+          if (postsWithUser.isEmpty) {
+            return const Center(child: Text('No public posts available.'));
+          }
+          return SafeArea(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(postsWithUserProvider);
+              },
+              child: ListView.builder(
+                itemCount: postsWithUser.length,
+                itemBuilder: (context, index) {
+                  final item = postsWithUser[index];
+                  return PostCardWidget(post: item.post, user: item.user);
+                },
+              ),
             ),
-            children:models.map((category) =>
-                CategoryItem(category: category,
-                    onSelected:(){selectCategory(context,category);}
-                )
-            ).toList()
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Error: $e'),
+              ElevatedButton(
+                onPressed: () => ref.invalidate(postsWithUserProvider),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
-        builder:(context,child)=>SlideTransition(
-            position: _animationController.drive(
-                Tween(
-                    begin: const Offset(0.0, 0.3),
-                    end: const Offset(0.0, 0.0)
-                )
-            ),
-          child:child,
-        )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddRecipeDialog(context, ref),
+        tooltip: 'Add New Recipe',
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAddRecipeDialog(BuildContext context, WidgetRef ref) {
+    final user = ref.read(userProvider).asData?.value;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must be logged in to create a recipe')),
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const AddEditMealPostScreen()),
     );
   }
 }

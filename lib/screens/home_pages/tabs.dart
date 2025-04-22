@@ -6,7 +6,6 @@ import 'package:nanden/screens/home_pages/posts_screen.dart';
 import 'package:nanden/screens/home_pages/profile_section.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../providers/filters_provider.dart';
 import 'main_body_screen.dart';
 import 'meals_screen.dart';
 
@@ -27,15 +26,14 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredMeals = ref.watch(filteredMealsProvider);
-    Widget activeScreen = MainBodyScreen(availableMeals: filteredMeals);
+    Widget activeScreen = AllPostsScreen();
 
     final userAsyncValue = ref.watch(userProvider);
 
     return userAsyncValue.when(
       data: (user) {
         if (_currentScreen == 0) {
-          activeScreen = MainBodyScreen(availableMeals: filteredMeals);
+          activeScreen = AllPostsScreen();
           
         } else if(_currentScreen == 1){
           activeScreen = SavedPostsScreen(
